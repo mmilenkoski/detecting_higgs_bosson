@@ -46,3 +46,20 @@ def create_csv_submission(ids, y_pred, name):
         writer.writeheader()
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({'Id':int(r1),'Prediction':int(r2)})
+
+def split_data_by_PRI_jet_num(tx, y, ids):
+    pri_jet_num = tx[:,data_columns_get_index("PRI_jet_num")]
+    
+    indx = {}
+    for i in range(4):
+        indx[i] = (pri_jet_num == i)
+    
+    tx_separated = {}
+    y_separated = {}
+    ids_separated = {}
+    for i in range(4):
+        tx_separated[i] = tx[indx[i]]
+        y_separated[i] = y[indx[i]]
+        ids_separated[i] = ids[indx[i]]
+        
+    return tx_separated, y_separated, ids_separated
