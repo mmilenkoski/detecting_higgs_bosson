@@ -28,5 +28,27 @@ def gradient_descent(y, tx, initial_w, max_iters, gamma):
               bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
     return losses, ws
 
+# This is the same as compute_gradient(y, tx, w)
+def compute_stoch_gradient(y, tx, w):
+    N = len(y)
+    e = y - np.dot(tx, w)
+    gradient = -1 / N * np.dot(np.transpose(tx), e)
+    return gradient
+
+
+def stochastic_gradient_descent(y, tx, initial_w, batch_size, max_iters, gamma):
+    ws = [initial_w]
+    losses = []
+    w = initial_w
+    for n_iter in range(max_iters):
+        batch = np.random.choice(range(len(y)), batch_size, replace=False)
+        gradient = compute_stoch_gradient(y[batch], tx[batch], w)
+        loss = compute_loss(y, tx, w)
+        w = w - gamma * gradient
+        ws.append(w)
+        losses.append(loss)
+        print("Stochastic Gradient Descent({bi}/{ti}): loss={l}, w0={w0}, w1={w1}".format(
+            bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]))
+    return losses, ws
 
 
