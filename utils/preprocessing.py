@@ -135,3 +135,39 @@ def split_data_by_PRI_jet_num(x, y, ids):
         ids_separated[i] = ids[indx[i]]
         
     return x_separated, y_separated, ids_separated
+
+def split_data_by_DER_mass_MMC(x, y):
+    null_ids = x[:, 0] == -999
+    not_null_ids = ~null_ids
+    
+    x_separated = {}
+    y_separated = {}
+    ids_separated = {}
+    
+    x_separated[0] = x[not_null_ids]
+    y_separated[0] = y[not_null_ids]
+    
+    x_separated[1] = x[null_ids, 1:]
+    y_separated[1] = y[null_ids]
+
+    return x_separated, y_separated
+
+def standardize(x):
+    """Standardize the original data set."""
+    mean_x = np.mean(x, axis=0)
+    x = x - mean_x
+    std_x = np.std(x, axis=0)
+    x = x / std_x
+    return x, mean_x, std_x
+
+def standardize(x_train, x_test):
+    """Standardize the original data set."""
+    mean_x = np.mean(x_train, axis=0)
+    x_train = x_train - mean_x
+    x_test = x_test - mean_x
+    
+    std_x = np.std(x_train, axis=0)
+    x_train = x_train / std_x
+    x_test = x_test / std_x
+    
+    return x_train, x_test
