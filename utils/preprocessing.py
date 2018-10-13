@@ -134,23 +134,48 @@ def split_data_by_PRI_jet_num(x, y, ids):
         y_separated[i] = y[indx[i]]
         ids_separated[i] = ids[indx[i]]
         
-    return x_separated, y_separated, ids_separated
+    return x_separated, y_separated, ids_separated, indx
 
-def split_data_by_DER_mass_MMC(x, y):
+def split_data_by_DER_mass_MMC_helper(x, y, ids, indx):
     null_ids = x[:, 0] == -999
     not_null_ids = ~null_ids
     
     x_separated = {}
     y_separated = {}
     ids_separated = {}
+    indx_separated = {}
     
     x_separated[0] = x[not_null_ids]
     y_separated[0] = y[not_null_ids]
+    ids_separated[0] = ids[not_null_ids]
+    indx_separated[0] = indx[not_null_ids]
     
     x_separated[1] = x[null_ids, 1:]
     y_separated[1] = y[null_ids]
+    ids_separated[1] = ids[null_ids]
+    indx_separated[1] = indx[null_ids]
 
-    return x_separated, y_separated
+    return x_separated, y_separated, ids_separated, indx_separated
+
+def split_data_by_DER_mass_MMC(x, y, ids):
+    x_separated = {}
+    y_separated = {}
+    ids_separated = {}
+    indx_separated = {}
+    t = 0
+    
+    x, y, ids, indx = split_data_by_PRI_jet_num(x, y, ids)
+    for i in range(4):
+        indx[i], = np.where(indx[i])
+        x_sep, y_sep, ids_sep, indx_sep = split_data_by_DER_mass_MMC_helper(x[i], y[i], ids[i], indx[i])
+        for j in range(2):
+            x_separated[t+j] = x_sep[j]
+            y_separated[t+j] = y_sep[j]
+            ids_separated[t+j] = ids_sep[j]
+            indx_separated[t+j] = indx_sep[j]
+        t = t + 2
+
+    return x_separated, y_separated, ids_separated, indx_separated
 
 def standardize(x):
     """Standardize the original data set."""
@@ -171,3 +196,27 @@ def standardize(x_train, x_test):
     x_test = x_test / std_x
     
     return x_train, x_test
+
+def build_k_indices(y, k_fold, seed, shuffle):
+    """build k indices for k-fold."""
+    num_row = y.shape[0]
+    interval = int(num_row / k_fold)
+    np.random.seed(seed)
+    if shuffle:
+        indices = np.random.permutation(num_row)
+    else:
+        indices = num_row
+    k_indices = [indices[k * interval: (k + 1) * interval] for k in range(k_fold)]
+    return np.array(k_indices)
+
+def k_fold_split(y, x, n_splits, seed=0, shuffle=True):
+    """return train index and test index.
+        sci-kit like function!
+    """
+    assert y.shape[0] == x.shape[0]
+    k_indices = build_k_indices(y, n_splits, seed, shuffle)
+    for n in range(n_splits):
+        te_indice = k_indices[n]
+        tr_indice = k_indices[~(np.arange(k_indices.shape[0]) == n)]
+        tr_indice = tr_indice.reshape(-1)
+        yield tr_indice, te_indice
