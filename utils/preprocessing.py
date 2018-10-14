@@ -255,6 +255,15 @@ def nan_to_mean(x_train, x_test):
     
     return x_train, x_test
 
+def build_poly(x, degree):
+    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    if degree == -1:
+        return x
+    poly = np.ones((len(x), 1))
+    for column in range(x.shape[1]):
+        for deg in range(1, degree+1):
+            poly = np.c_[poly, np.power(x[:, column], deg)]
+    return poly
 
 def index_of_PRI_tau_phi(model):
     if model == 0:
