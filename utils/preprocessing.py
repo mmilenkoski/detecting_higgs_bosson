@@ -187,6 +187,7 @@ def standardize(x):
 
 def standardize(x_train, x_test):
     """Standardize the original data set."""
+    assert x_train.shape[1] == x_test.shape[1]
     mean_x = np.mean(x_train, axis=0)
     x_train = x_train - mean_x
     x_test = x_test - mean_x
@@ -195,6 +196,22 @@ def standardize(x_train, x_test):
     x_train = x_train / std_x
     x_test = x_test / std_x
     
+    return x_train, x_test
+
+def min_max_normalization(x_train, x_test):
+    """Standardize the original data set."""
+    
+    assert x_train.shape[1] == x_test.shape[1]
+    min_x = np.min(x_train, axis=0)
+    max_x = np.max(x_train, axis=0)
+    denum = max_x - min_x
+    
+    x_train = x_train - min_x
+    x_train = x_train / denum
+    
+    x_test = x_test - min_x
+    x_test = x_test / denum
+
     return x_train, x_test
 
 def build_k_indices(y, k_fold, seed, shuffle):
