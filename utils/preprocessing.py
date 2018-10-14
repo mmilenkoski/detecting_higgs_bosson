@@ -220,3 +220,20 @@ def k_fold_split(y, x, n_splits, seed=0, shuffle=True):
         tr_indice = k_indices[~(np.arange(k_indices.shape[0]) == n)]
         tr_indice = tr_indice.reshape(-1)
         yield tr_indice, te_indice
+        
+def nan_to_mean(x_train, x_test):
+    """
+    This method is used to replace -999 values with the mean of each column
+    :param x: matrix X of training
+    :param testx: matrix X of testing
+    :return: the two matrix after substitution of each -999 value with the mean
+    """
+    x_train[np.where(x_train == -999)] = np.nan
+    means = np.nanmean(x_train, axis=0)
+    inds = np.where(np.isnan(x_train))
+    x_train[inds] = np.take(means, inds[1])
+    
+    inds = np.where(np.isnan(x_test))
+    x_test[inds] = np.take(means, inds[1])
+    
+    return x_train, x_test
