@@ -254,3 +254,104 @@ def nan_to_mean(x_train, x_test):
     x_test[inds] = np.take(means, inds[1])
     
     return x_train, x_test
+
+
+def index_of_PRI_tau_phi(model):
+    if model == 0:
+        return 11
+    elif model == 1:
+        return 10
+    elif model == 2:
+        return 11
+    elif model == 3:
+        return 10
+    elif model == 4:
+        return 15
+    elif model == 5:
+        return 14
+    elif model == 6:
+        return 15
+    elif model == 7:
+        return 14
+
+
+def index_of_PRI_lep_phi(model):
+    if model == 0:
+        return 14
+    elif model == 1:
+        return 13
+    elif model == 2:
+        return 14
+    elif model == 3:
+        return 13
+    elif model == 4:
+        return 18
+    elif model == 5:
+        return 17
+    elif model == 6:
+        return 18
+    elif model == 7:
+        return 17
+
+
+def index_of_PRI_met_phi(model):
+    if model == 0:
+        return 16
+    elif model == 1:
+        return 15
+    elif model == 2:
+        return 16
+    elif model == 3:
+        return 15
+    elif model == 4:
+        return 20
+    elif model == 5:
+        return 19
+    elif model == 6:
+        return 20
+    elif model == 7:
+        return 19
+
+def index_of_PRI_jet_leading_phi(model):
+    if model == 0:
+        print('You called a non-existing parameter')
+        return np.nan
+    elif model == 1:
+        print('You called a non-existing parameter')
+        return np.nan
+    elif model == 2:
+        return 20
+    elif model == 3:
+        return 19
+    elif model == 4:
+        return 24
+    elif model == 5:
+        return 23
+    elif model == 6:
+        return 24
+    elif model == 7:
+        return 23
+
+
+def index_of_PRI_jet_subleading_phi(model):
+    if model == 0:
+        print('You called a non-existing parameter')
+        return np.nan
+    elif model == 1:
+        print('You called a non-existing parameter')
+        return np.nan
+    elif model == 2:
+        print('You called a non-existing parameter')
+        return np.nan
+    elif model == 3:
+        print('You called a non-existing parameter')
+        return np.nan
+    elif model == 4:
+        return 27
+    elif model == 5:
+        return 26
+    elif model == 6:
+        return 27
+    elif model == 7:
+        return 26
+
