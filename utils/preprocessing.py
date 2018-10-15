@@ -265,7 +265,20 @@ def build_poly(x, degree):
             poly = np.c_[poly, np.power(x[:, column], deg)]
     return poly
 
+
+#The models are the following ones:
+# 0 - jet 0 with mass
+# 1 - jet 0 witout mass
+# 2 - jet 1 with mass
+# 3 - jet 1 without mass
+# 4 - jet 2 with mass
+# 5 - jet 2 without mass
+# 6 - jet 3 with mass
+# 7 - jet 3 without mass
+
 def index_of_PRI_tau_phi(model):
+    # For each possible model, this function return the exact position of the variable in the name in the dictionary
+    # which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
     if model == 0:
         return 11
     elif model == 1:
@@ -287,6 +300,8 @@ def index_of_PRI_tau_phi(model):
 
 
 def index_of_PRI_lep_phi(model):
+    # For each possible model, this function return the exact position of the variable in the name in the dictionary
+    # which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
     if model == 0:
         return 14
     elif model == 1:
@@ -308,6 +323,8 @@ def index_of_PRI_lep_phi(model):
 
 
 def index_of_PRI_met_phi(model):
+    # For each possible model, this function return the exact position of the variable in the name in the dictionary
+    # which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
     if model == 0:
         return 16
     elif model == 1:
@@ -328,6 +345,8 @@ def index_of_PRI_met_phi(model):
         print("Wrong input!")
 
 def index_of_PRI_jet_leading_phi(model):
+    # For each possible model, this function return the exact position of the variable in the name in the dictionary
+    # which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
     if model == 0:
         print('You called a non-existing parameter')
         return np.nan
@@ -351,6 +370,8 @@ def index_of_PRI_jet_leading_phi(model):
 
 
 def index_of_PRI_jet_subleading_phi(model):
+    # For each possible model, this function return the exact position of the variable in the name in the dictionary
+    # which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
     if model == 0:
         print('You called a non-existing parameter')
         return np.nan
@@ -374,16 +395,26 @@ def index_of_PRI_jet_subleading_phi(model):
 
 
 def adjust_cartesian_features(x_separated):
+    # This function fixes the problem of having angles as features. Obviosly, having angles as features doesn't help
+    # As the apsolutie direction in which particles leave the detector is irelevant, we simply take PRI_tau_phi as
+    # a reference angle, and substract it from all the other angles
+    # Then we delete all the angles (we don't want them as features)
+    # Instead we use sin() and cos() of all the angles as features. Note that this is sin() and cos() of all the
+    # relative angles, where PRI_tau_phi has already been substracted
     for model in range(len(x_separated)):
+        # For easier manipulation, I transpose everything
         x_separated[model] = np.transpose(x_separated[model])
     for model in range(len(x_separated)):
         PRI_tau_phi = x_separated[model][index_of_PRI_tau_phi(model)]
         PRI_lep_phi = x_separated[model][index_of_PRI_lep_phi(model)]
         PRI_met_phi = x_separated[model][index_of_PRI_met_phi(model)]
         if model > 1:
+            # If we don't have enought beams, some variables are not defined
             PRI_jet_leading_phi = x_separated[model][index_of_PRI_jet_leading_phi(model)]
         if model > 3:
+            # If we don't have enought beams, some variables are not defined
             PRI_jet_subleading_phi = x_separated[model][index_of_PRI_jet_subleading_phi(model)]
+        # Here we add all the new features
         x_separated[model] = np.vstack((x_separated[model], np.sin(PRI_lep_phi - PRI_tau_phi)))
         x_separated[model] = np.vstack((x_separated[model], np.cos(PRI_lep_phi - PRI_tau_phi)))
         x_separated[model] = np.vstack((x_separated[model], np.sin(PRI_met_phi - PRI_tau_phi)))
@@ -394,6 +425,7 @@ def adjust_cartesian_features(x_separated):
         if model > 3:
             x_separated[model] = np.vstack((x_separated[model], np.sin(PRI_jet_subleading_phi - PRI_tau_phi)))
             x_separated[model] = np.vstack((x_separated[model], np.cos(PRI_jet_subleading_phi - PRI_tau_phi)))
+        # Here we delete all the angles, as we don't want to have them as features any more
         if model > 3:
             x_separated[model] = np.delete(x_separated[model], (index_of_PRI_tau_phi(model), index_of_PRI_lep_phi(model), index_of_PRI_met_phi(model), index_of_PRI_jet_leading_phi(model), index_of_PRI_jet_subleading_phi(model)), axis=0)
         elif model > 1:
@@ -401,6 +433,7 @@ def adjust_cartesian_features(x_separated):
         else:
             x_separated[model] = np.delete(x_separated[model], (index_of_PRI_tau_phi(model), index_of_PRI_lep_phi(model), index_of_PRI_met_phi(model)), axis=0)
     for model in range(len(x_separated)):
+        # In order to return the variables in the same format, we need to transpose the data again
         x_separated[model] = np.transpose(x_separated[model])
     return x_separated
 
