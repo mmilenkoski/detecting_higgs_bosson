@@ -277,8 +277,19 @@ def build_poly(x, degree):
 # 7 - jet 3 without mass
 
 def index_of_PRI_tau_phi(model):
-    # For each possible model, this function return the exact position of the variable in the name in the dictionary
-    # which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
+    """For each possible model, this function return the exact position of the variable in the name in the dictionary
+        which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
+
+        Parameters
+        ----------
+        model: int
+            integer of the model number (see list above).
+
+        Returns
+        -------
+        variable: integer
+            integer of the position of the variable in the given model
+        """
     if model == 0:
         return 11
     elif model == 1:
@@ -300,8 +311,19 @@ def index_of_PRI_tau_phi(model):
 
 
 def index_of_PRI_lep_phi(model):
-    # For each possible model, this function return the exact position of the variable in the name in the dictionary
-    # which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
+    """For each possible model, this function return the exact position of the variable in the name in the dictionary
+        which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
+
+        Parameters
+        ----------
+        model: int
+            integer of the model number (see list above).
+
+        Returns
+        -------
+        variable: integer
+            integer of the position of the variable in the given model
+        """
     if model == 0:
         return 14
     elif model == 1:
@@ -323,8 +345,19 @@ def index_of_PRI_lep_phi(model):
 
 
 def index_of_PRI_met_phi(model):
-    # For each possible model, this function return the exact position of the variable in the name in the dictionary
-    # which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
+    """For each possible model, this function return the exact position of the variable in the name in the dictionary
+        which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
+
+        Parameters
+        ----------
+        model: int
+            integer of the model number (see list above).
+
+        Returns
+        -------
+        variable: integer
+            integer of the position of the variable in the given model
+        """
     if model == 0:
         return 16
     elif model == 1:
@@ -345,8 +378,19 @@ def index_of_PRI_met_phi(model):
         print("Wrong input!")
 
 def index_of_PRI_jet_leading_phi(model):
-    # For each possible model, this function return the exact position of the variable in the name in the dictionary
-    # which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
+    """For each possible model, this function return the exact position of the variable in the name in the dictionary
+        which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
+
+        Parameters
+        ----------
+        model: int
+            integer of the model number (see list above).
+
+        Returns
+        -------
+        variable: integer
+            integer of the position of the variable in the given model
+        """
     if model == 0:
         print('You called a non-existing parameter')
         return np.nan
@@ -370,8 +414,19 @@ def index_of_PRI_jet_leading_phi(model):
 
 
 def index_of_PRI_jet_subleading_phi(model):
-    # For each possible model, this function return the exact position of the variable in the name in the dictionary
-    # which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
+    """For each possible model, this function return the exact position of the variable in the name in the dictionary
+        which contains all the possible models with all possible variables (for example x_test_sep, x_train_sep)
+
+        Parameters
+        ----------
+        model: int
+            integer of the model number (see list above).
+
+        Returns
+        -------
+        variable: integer
+            integer of the position of the variable in the given model
+        """
     if model == 0:
         print('You called a non-existing parameter')
         return np.nan
@@ -395,12 +450,28 @@ def index_of_PRI_jet_subleading_phi(model):
 
 
 def adjust_cartesian_features(x_separated):
-    # This function fixes the problem of having angles as features. Obviosly, having angles as features doesn't help
-    # As the apsolutie direction in which particles leave the detector is irelevant, we simply take PRI_tau_phi as
-    # a reference angle, and substract it from all the other angles
-    # Then we delete all the angles (we don't want them as features)
-    # Instead we use sin() and cos() of all the angles as features. Note that this is sin() and cos() of all the
-    # relative angles, where PRI_tau_phi has already been substracted
+    """
+    This function fixes the problem of having angles as features. Obviosly, having angles as features doesn't help
+    As the apsolutie direction in which particles leave the detector is irelevant, we simply take PRI_tau_phi as
+    a reference angle, and substract it from all the other angles
+    Then we delete all the angles (we don't want them as features)
+    Instead we use sin() and cos() of all the angles as features. Note that this is sin() and cos() of all the
+    relative angles, where PRI_tau_phi has already been substracted
+
+        Parameters
+        ----------
+        x_separated: dict
+            dictionary using the model number as a key (integers from 0 to 7)
+            Each element in the dictionary is a ndarray (2D array).
+            The columns are the corresponding features (mass, angles, ...),
+            while the rows correspond to different events
+
+        Returns
+        -------
+        x_separated: dict
+            A table in the same format, with adjusted features
+        """
+
     for model in range(len(x_separated)):
         # For easier manipulation, I transpose everything
         x_separated[model] = np.transpose(x_separated[model])
