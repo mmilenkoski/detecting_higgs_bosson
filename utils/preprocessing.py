@@ -282,6 +282,8 @@ def index_of_PRI_tau_phi(model):
         return 15
     elif model == 7:
         return 14
+    else:
+        print("Wrong input!")
 
 
 def index_of_PRI_lep_phi(model):
@@ -301,6 +303,8 @@ def index_of_PRI_lep_phi(model):
         return 18
     elif model == 7:
         return 17
+    else:
+        print("Wrong input!")
 
 
 def index_of_PRI_met_phi(model):
@@ -320,6 +324,8 @@ def index_of_PRI_met_phi(model):
         return 20
     elif model == 7:
         return 19
+    else:
+        print("Wrong input!")
 
 def index_of_PRI_jet_leading_phi(model):
     if model == 0:
@@ -340,6 +346,8 @@ def index_of_PRI_jet_leading_phi(model):
         return 24
     elif model == 7:
         return 23
+    else:
+        print("Wrong input!")
 
 
 def index_of_PRI_jet_subleading_phi(model):
@@ -363,4 +371,48 @@ def index_of_PRI_jet_subleading_phi(model):
         return 27
     elif model == 7:
         return 26
+
+
+def adjust_cartesian_features(x_separated):
+    for model in range(len(x_separated)):
+        x_separated[model] = np.transpose(x_separated[model])
+    for model in range(len(x_separated)):
+        PRI_tau_phi = x_separated[model][index_of_PRI_tau_phi(model)]
+        PRI_lep_phi = x_separated[model][index_of_PRI_lep_phi(model)]
+        PRI_met_phi = x_separated[model][index_of_PRI_met_phi(model)]
+        if model > 1:
+            PRI_jet_leading_phi = x_separated[model][index_of_PRI_jet_leading_phi(model)]
+        if model > 3:
+            PRI_jet_subleading_phi = x_separated[model][index_of_PRI_jet_subleading_phi(model)]
+        x_separated[model] = np.vstack((x_separated[model], np.sin(PRI_lep_phi - PRI_tau_phi)))
+        x_separated[model] = np.vstack((x_separated[model], np.cos(PRI_lep_phi - PRI_tau_phi)))
+        x_separated[model] = np.vstack((x_separated[model], np.sin(PRI_met_phi - PRI_tau_phi)))
+        x_separated[model] = np.vstack((x_separated[model], np.cos(PRI_met_phi - PRI_tau_phi)))
+        if model > 1:
+            x_separated[model] = np.vstack((x_separated[model], np.sin(PRI_jet_leading_phi - PRI_tau_phi)))
+            x_separated[model] = np.vstack((x_separated[model], np.cos(PRI_jet_leading_phi - PRI_tau_phi)))
+        if model > 3:
+            x_separated[model] = np.vstack((x_separated[model], np.sin(PRI_jet_subleading_phi - PRI_tau_phi)))
+            x_separated[model] = np.vstack((x_separated[model], np.cos(PRI_jet_subleading_phi - PRI_tau_phi)))
+        if model > 3:
+            x_separated[model] = np.delete(x_separated[model], (index_of_PRI_tau_phi(model), index_of_PRI_lep_phi(model), index_of_PRI_met_phi(model), index_of_PRI_jet_leading_phi(model), index_of_PRI_jet_subleading_phi(model)), axis=0)
+        elif model > 1:
+            x_separated[model] = np.delete(x_separated[model], (index_of_PRI_tau_phi(model), index_of_PRI_lep_phi(model), index_of_PRI_met_phi(model), index_of_PRI_jet_leading_phi(model)), axis=0)
+        else:
+            x_separated[model] = np.delete(x_separated[model], (index_of_PRI_tau_phi(model), index_of_PRI_lep_phi(model), index_of_PRI_met_phi(model)), axis=0)
+    for model in range(len(x_separated)):
+        x_separated[model] = np.transpose(x_separated[model])
+    return x_separated
+
+
+
+
+
+
+
+
+
+
+
+
 
