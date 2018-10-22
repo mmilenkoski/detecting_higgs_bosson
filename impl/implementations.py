@@ -142,6 +142,39 @@ def ridge_regression(y, tx, lambda_):
     
     return w, loss
 
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
+    """Computes least squares using gradient descent
+    
+    Parameters
+    ----------
+    y: ndarray
+        1D array containing the correct labels of the training data. 
+    tx: ndarray
+        2D array containing the training data.
+    initial_w: ndarray
+        1D array containing the initial weight vector
+    max_iters: int
+        number of steps to run the gradient descent
+    gamma: float
+        step size
+     
+    Returns
+    -------
+    w: ndarray
+        1D array containing the final weight vector
+    loss: float
+        loss corresponding to the last weight vector
+    """
+    # Define parameters to store w and loss
+    w = initial_w
+    loss = -1
+    
+    for n_iter in range(max_iters):
+        # update w and get loss
+        loss, w = learning_by_gradient_descent(y, tx, w, gamma)
+        
+    return w, loss
+
 
 def compute_gradient(y, tx, w):
     """Computes the gradient.
@@ -212,6 +245,37 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         end_index = min((batch_num + 1) * batch_size, data_size)
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
+            
+def sigmoid(t):
+    """apply sigmoid function on t."""
+    exponent = np.exp(t)
+    return exponent/(1+exponent)
+
+
+def calculate_loss(y, tx, w):
+    """compute the cost by negative log likelihood."""
+    z = np.dot(tx, w)
+    predicted = sigmoid(z)
+    result = -np.sum(y * np.log(predicted) + (1 - y) * np.log(1 - predicted))
+    return result
+
+def calculate_gradient(y, tx, w):
+    """compute the gradient of loss."""
+    z = np.dot(tx, w)
+    predicted = sigmoid(z)
+    gradient = np.dot(tx.T, (predicted - y))
+    return gradient
+
+def learning_by_gradient_descent(y, tx, w, gamma):
+    """
+    Do one step of gradient descen using logistic regression.
+    Return the loss and the updated w.
+    """
+    gradient = calculate_gradient(y, tx, w)
+    w = w - gamma*gradient
+    loss = calculate_loss(y, tx, w)
+    return loss, w
+
 
 
 
