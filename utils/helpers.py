@@ -2,6 +2,7 @@
 """some helper functions for project 1."""
 import csv
 import numpy as np
+from impl.implementations import sigmoid
 
 
 def load_csv_data(data_path, sub_sample=False):
@@ -24,11 +25,17 @@ def load_csv_data(data_path, sub_sample=False):
     return yb, input_data, ids
 
 
-def predict_labels(weights, data):
+def predict_labels(weights, data, method):
     """Generates class predictions given weights, and a test data matrix"""
-    y_pred = np.dot(data, weights)
-    y_pred[np.where(y_pred <= 0)] = -1
-    y_pred[np.where(y_pred > 0)] = 1
+    if method == "logistic" or method =="SKL":
+        z = np.dot(data, weights)
+        y_pred = sigmoid(z)
+        y_pred[np.where(y_pred <= 0.5)] = -1
+        y_pred[np.where(y_pred > 0.5)] = 1
+    else:
+        y_pred = np.dot(data, weights)
+        y_pred[np.where(y_pred <= 0)] = -1
+        y_pred[np.where(y_pred > 0)] = 1
     
     return y_pred
 

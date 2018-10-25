@@ -177,14 +177,6 @@ def split_data_by_DER_mass_MMC(x, y, ids):
 
     return x_separated, y_separated, ids_separated, indx_separated
 
-def standardize(x):
-    """Standardize the original data set."""
-    mean_x = np.mean(x, axis=0)
-    x = x - mean_x
-    std_x = np.std(x, axis=0)
-    x = x / std_x
-    return x, mean_x, std_x
-
 def standardize(x_train, x_test):
     """Standardize the original data set."""
     assert x_train.shape[1] == x_test.shape[1]
@@ -193,6 +185,7 @@ def standardize(x_train, x_test):
     x_test = x_test - mean_x
     
     std_x = np.std(x_train, axis=0)
+    std_x[std_x == 0] = 1
     x_train = x_train / std_x
     x_test = x_test / std_x
     
@@ -205,6 +198,7 @@ def min_max_normalization(x_train, x_test):
     min_x = np.min(x_train, axis=0)
     max_x = np.max(x_train, axis=0)
     denum = max_x - min_x
+    denum[denum == 0] = 1
     
     x_train = x_train - min_x
     x_train = x_train / denum
@@ -250,6 +244,8 @@ def nan_to_mean(x_train, x_test):
     inds = np.where(np.isnan(x_train))
     x_train[inds] = np.take(means, inds[1])
     
+    x_test[np.where(x_test == -999)] = np.nan
+    means = np.nanmean(x_test, axis=0)
     inds = np.where(np.isnan(x_test))
     x_test[inds] = np.take(means, inds[1])
     

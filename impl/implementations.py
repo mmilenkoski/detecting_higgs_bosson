@@ -172,6 +172,8 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
         # update w and get loss
         loss, w = learning_by_gradient_descent(y, tx, w, gamma)
+        if n_iter % 5 == 0:
+            print("Itteration: %s, Loss: %s" % (n_iter, loss))
         
     return w, loss
 
@@ -213,12 +215,17 @@ def calculate_mae(e):
     return mae
 
 
-def compute_loss(y, tx, w):
+def compute_loss(y, tx, w, method=None):
     """Calculate the loss.
 
     You can calculate the loss using mse or mae.
     """
+    if method == "logistic" or method == "SKL":
+        return calculate_loss(y, tx, w)
     e = y - np.dot(tx, w)
+    if method == "rmse":
+        return np.sqrt(2* calculate_mse(e))
+    #TUKA TREBA MAE ILI MSE???
     return calculate_mae(e)
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
@@ -248,16 +255,60 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
             
 def sigmoid(t):
     """apply sigmoid function on t."""
+    """epsilon = 1e-5
     exponent = np.exp(t)
-    return exponent/(1+exponent)
+    print("exponent: %s" % np.isnan(exponent).any())
+    return exponent/(1+exponent)"""
+    """s = 1/(1+np.exp(-t))
+    return s"""
+    return np.exp(-np.logaddexp(0, -t))
+
+    """def sigmoid(x):
+    pos_mask = (x >= 0)
+    neg_mask = (x < 0)
+    z = np.zeros_like(x,dtype=float)
+    z[pos_mask] = np.exp(-x[pos_mask])
+    z[neg_mask] = np.exp(x[neg_mask])
+    top = np.ones_like(x,dtype=float)
+    top[neg_mask] = z[neg_mask]
+    return top / (1 + z)"""
 
 
 def calculate_loss(y, tx, w):
     """compute the cost by negative log likelihood."""
+    """epsilon = 1e-5
+    print("y: %s" % np.isnan(y).any())
+    print("tx: %s" % np.isnan(tx).any())
+    print("w: %s" % np.isnan(w).any())
     z = np.dot(tx, w)
+    print("z: %s" % np.isnan(z).any())
     predicted = sigmoid(z)
-    result = -np.sum(y * np.log(predicted) + (1 - y) * np.log(1 - predicted))
-    return result
+    print("predicted: %s" % np.isnan(predicted).any())
+    y.shape = (-1, 1)
+    result = -np.sum(y * np.log(predicted + epsilon) + (1 - y) * np.log(1 - predicted + epsilon))
+    #print(y)
+    #print(predicted)
+    return result/y.shape[0]"""
+    """t = np.dot(tx, w)
+    term1 = np.maximum(t, 0) + np.log(np.exp(-np.absolute(t)) + 1)
+    #y.shape = (-1, 1)
+    term2 = (np.multiply(y, t))
+    erro = term1 - term2
+    loss = sum(erro)
+    print("Davor loss: %s" % (loss/y.shape[0]))"""
+#     y.shape = (-1, 1)
+#     pred = sigmoid(tx.dot(w))
+#     loss = y.T.dot(np.log(pred + 1e-5)) + (1 - y).T.dot(np.log(1 - pred + 1e-5))
+#     return np.squeeze(- loss)
+    """compute the cost by negative log likelihood."""
+    pred = tx.dot(w)
+    term1 = np.logaddexp(0, pred)
+    term2 = np.multiply(y, pred)
+    loss = np.sum(term1-term2)
+#     import sklearn
+#     print("Real loss: %s" % (sklearn.metrics.log_loss(y, pred)))
+#     print("Our loss: %s" % (loss/y.shape[0]))
+    return loss/y.shape[0]
 
 def calculate_gradient(y, tx, w):
     """compute the gradient of loss."""

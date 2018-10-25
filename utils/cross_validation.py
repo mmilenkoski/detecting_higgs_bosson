@@ -12,8 +12,11 @@ def cross_validation(x, y, lambdas, poly_degree=-1, norm=None, method="ridge", n
     rmse_te = []
     acc_tr = []
     acc_te = []
+    if method == "logistic" or method == "SKL":
+        y = (1 + y) / 2
     
     for t, lambda_ in enumerate(lambdas):
+        print("NEW LAMBDA: %s" % lambda_)
         rmse_tr_t = []
         rmse_te_t = []
         acc_tr_t = []
@@ -27,24 +30,63 @@ def cross_validation(x, y, lambdas, poly_degree=-1, norm=None, method="ridge", n
             if norm == "min_max":
                 x_train_kfold, x_test_kfold = min_max_normalization(x_train_kfold, x_test_kfold)
             elif norm == "std":
-                x_test_kfold, x_test_kfold = standardize(x_train_kfold, x_test_kfold)
+                x_train_kfold, x_test_kfold = standardize(x_train_kfold, x_test_kfold)
                 
             x_train_kfold = build_poly(x_train_kfold, poly_degree)
             x_test_kfold = build_poly(x_test_kfold, poly_degree)
             
+            #OVA E VISOK
+            '''if norm == "min_max":
+                x_train_kfold, x_test_kfold = min_max_normalization(x_train_kfold, x_test_kfold)
+            elif norm == "std":
+                x_train_kfold, x_test_kfold = standardize(x_train_kfold, x_test_kfold)'''
+            
+            initial_w = np.ones((x_train_kfold.shape[1], 1))
             if method == "ridge":
                 w, _ = ridge_regression(tx=x_train_kfold, y=y_train_kfold, lambda_=lambda_)
+            elif method == "logistic":
+                y_train_kfold.shape = (-1, 1)
+                w, _ = logistic_regression(y=y_train_kfold, tx=x_train_kfold, initial_w=initial_w, max_iters=2500, gamma=lambda_)
+            elif method =="SKL":
+                from sklearn.linear_model import LogisticRegression as SLR
+                slr = SLR()
+                y_train_kfold.shape = (-1)
+                slr = slr.fit(x_train_kfold, y_train_kfold)
+                w = slr.coef_
+                w.shape = (-1, 1)
             #elif: TO ADD NEW METHODS
+            print()
             
-            loss_tr = np.sqrt(2*compute_loss(y_train_kfold, x_train_kfold, w))
-            loss_te = np.sqrt(2*compute_loss(y_test_kfold, x_test_kfold, w))
+            if method == "logistic" or method == "SKL":
+                loss_method = "logistic"
+            else:
+                loss_method = "rmse"
+            
+            loss_tr = compute_loss(y_train_kfold, x_train_kfold, w, loss_method)
+            loss_te = compute_loss(y_test_kfold, x_test_kfold, w, loss_method)
             rmse_tr_t.append(loss_tr)
             rmse_te_t.append(loss_te)
             
-            train_pred = predict_labels(w, x_train_kfold)
+            train_pred = predict_labels(w, x_train_kfold, method)
+            test_pred = predict_labels(w, x_test_kfold, method)
+            
+            if method == "logistic" or method == "SKL":
+                y_train_kfold = 2*y_train_kfold - 1
+                y_test_kfold = 2*y_test_kfold - 1
             acc_tr_t.append(np.sum(y_train_kfold == train_pred)*1.0/len(train_pred))
-            test_pred = predict_labels(w, x_test_kfold)
             acc_te_t.append(np.sum(y_test_kfold == test_pred)*1.0/len(test_pred))
+            
+            
+            
+            """from sklearn.metrics import log_loss
+            z = np.dot(x_train_kfold, w)
+            train_pred = sigmoid(z)
+            z = np.dot(x_test_kfold, w)
+            test_pred = sigmoid(z)
+            print("Training loss: %s, Testing loss: %s" % (loss_tr, loss_te))
+            print("SCTraining loss: %s, SCTesting loss: %s" % (log_loss(y_train_kfold, train_pred), log_loss(y_test_kfold, test_pred)))"""
+            
+            
             
         rmse_tr.append(np.mean(rmse_tr_t))
         rmse_te.append(np.mean(rmse_te_t))
@@ -77,10 +119,10 @@ def train_and_get_predictions(X_train, Y_train, X_test, Y_test, Y_inds, best_lam
             w = ridge_regression(tx=x_train, y=y_train, lambda_=lambda_)
         #elif: ADD NEW METHODS
         
-        train_pred = predict_labels(w, x_train)
+        train_pred = predict_labels(w, x_train, method)
         train_accuracy.append(np.sum(y_train == train_pred)*1.0/len(y_train))
         
-        predictions[Y_inds[i]] = predict_labels(w, x_test)
+        predictions[Y_inds[i]] = predict_labels(w, x_test, method)
     
     print(train_accuracy)
     print(np.mean(train_accuracy))
