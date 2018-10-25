@@ -251,6 +251,25 @@ def nan_to_mean(x_train, x_test):
     
     return x_train, x_test
 
+def nan_to_median(x_train, x_test):
+    """
+    This method is used to replace -999 values with the mean of each column
+    :param x: matrix X of training
+    :param testx: matrix X of testing
+    :return: the two matrix after substitution of each -999 value with the mean
+    """
+    x_train[np.where(x_train == -999)] = np.nan
+    medians = np.nanmedian(x_train, axis=0)
+    inds = np.where(np.isnan(x_train))
+    x_train[inds] = np.take(medians, inds[1])
+    
+    x_test[np.where(x_test == -999)] = np.nan
+    medians = np.nanmedian(x_test, axis=0)
+    inds = np.where(np.isnan(x_test))
+    x_test[inds] = np.take(medians, inds[1])
+    
+    return x_train, x_test
+
 def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
     if degree == -1:

@@ -173,7 +173,7 @@ def logistic_regression_sgd(y, tx, initial_w, max_iters, gamma):
         for y_batch, tx_batch in batch_iter(y, tx, batch_size=1):
             # update w and get loss
             loss, w = learning_by_gradient_descent(y_batch, tx_batch, w, gamma)
-            if n_iter % 300 == 0:
+            if n_iter % 1000 == 0:
                 print("Itteration: %s, Loss: %s" % (n_iter, loss))
         
     return w, loss
