@@ -210,7 +210,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
         # update w and get loss
         loss, w = learning_by_gradient_descent(y, tx, w, gamma)
-        if n_iter % 300 == 0:
+        if n_iter % 1000 == 0:
             print("Itteration: %s, Loss: %s" % (n_iter, loss))
         if prev_loss != -1 and np.abs(loss-prev_loss) < threshold:
             print (prev_loss)
