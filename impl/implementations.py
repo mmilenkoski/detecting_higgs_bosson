@@ -142,7 +142,7 @@ def ridge_regression(y, tx, lambda_):
     
     return w, loss
 
-def logistic_regression(y, tx, initial_w, max_iters, gamma):
+def logistic_regression_sgd(y, tx, initial_w, max_iters, gamma):
     """Computes least squares using gradient descent
     
     Parameters
@@ -170,10 +170,53 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     loss = -1
     
     for n_iter in range(max_iters):
+        for y_batch, tx_batch in batch_iter(y, tx, batch_size=1):
+            # update w and get loss
+            loss, w = learning_by_gradient_descent(y_batch, tx_batch, w, gamma)
+            if n_iter % 300 == 0:
+                print("Itteration: %s, Loss: %s" % (n_iter, loss))
+        
+    return w, loss
+
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
+    """Logistic regression using gradient descent
+    
+    Parameters
+    ----------
+    y: ndarray
+        1D array containing the correct labels of the training data. 
+    tx: ndarray
+        2D array containing the training data.
+    initial_w: ndarray
+        1D array containing the initial weight vector
+    max_iters: int
+        number of steps to run the gradient descent
+    gamma: float
+        step size
+     
+    Returns
+    -------
+    w: ndarray
+        1D array containing the final weight vector
+    loss: float
+        loss corresponding to the last weight vector
+    """
+    # Define parameters to store w and loss
+    w = initial_w
+    loss = -1
+    prev_loss = -1
+    threshold = 1e-8
+    
+    for n_iter in range(max_iters):
         # update w and get loss
         loss, w = learning_by_gradient_descent(y, tx, w, gamma)
         if n_iter % 300 == 0:
             print("Itteration: %s, Loss: %s" % (n_iter, loss))
+        if prev_loss != -1 and np.abs(loss-prev_loss) < threshold:
+            print (prev_loss)
+            print(loss)
+            break
+        prev_loss = loss
         
     return w, loss
 

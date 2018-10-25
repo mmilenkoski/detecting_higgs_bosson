@@ -8,6 +8,7 @@ from utils.plots import *
 
 
 def cross_validation(x, y, lambdas, poly_degree=-1, norm=None, method="ridge", n_splits=10, visualize=True, seed=0, max_iters=100):
+    print ("Start")
     rmse_tr = []
     rmse_te = []
     acc_tr = []
@@ -86,13 +87,14 @@ def cross_validation(x, y, lambdas, poly_degree=-1, norm=None, method="ridge", n
         rmse_te.append(np.mean(rmse_te_t))
         acc_tr.append(np.mean(acc_tr_t))
         acc_te.append(np.mean(acc_te_t))
-    
+    print (visualize)
     if visualize:
         cross_validation_visualization(lambdas, rmse_tr, rmse_te)
         print("Train loss: %s" % (rmse_tr))
         print("Test loss: %s" % (rmse_te))
         print("Train acc: %s" % (np.mean(acc_tr)))
         print("Test acc: %s" % (np.mean(acc_te)))
+        print()
     lambda_ind = np.argmin(rmse_te)
     return lambdas[lambda_ind], acc_tr[lambda_ind], acc_te[lambda_ind]
 
