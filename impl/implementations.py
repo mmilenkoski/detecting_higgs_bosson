@@ -172,7 +172,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
         # update w and get loss
         loss, w = learning_by_gradient_descent(y, tx, w, gamma)
-        if n_iter % 5 == 0:
+        if n_iter % 300 == 0:
             print("Itteration: %s, Loss: %s" % (n_iter, loss))
         
     return w, loss
@@ -301,6 +301,7 @@ def calculate_loss(y, tx, w):
 #     loss = y.T.dot(np.log(pred + 1e-5)) + (1 - y).T.dot(np.log(1 - pred + 1e-5))
 #     return np.squeeze(- loss)
     """compute the cost by negative log likelihood."""
+    y.shape = (-1, 1)
     pred = tx.dot(w)
     term1 = np.logaddexp(0, pred)
     term2 = np.multiply(y, pred)

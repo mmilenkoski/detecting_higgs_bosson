@@ -7,7 +7,7 @@ from utils.preprocessing import *
 from utils.plots import *
 
 
-def cross_validation(x, y, lambdas, poly_degree=-1, norm=None, method="ridge", n_splits=10, visualize=True, seed=0):
+def cross_validation(x, y, lambdas, poly_degree=-1, norm=None, method="ridge", n_splits=10, visualize=True, seed=0, max_iters=100):
     rmse_tr = []
     rmse_te = []
     acc_tr = []
@@ -35,18 +35,14 @@ def cross_validation(x, y, lambdas, poly_degree=-1, norm=None, method="ridge", n
             x_train_kfold = build_poly(x_train_kfold, poly_degree)
             x_test_kfold = build_poly(x_test_kfold, poly_degree)
             
-            #OVA E VISOK
-            '''if norm == "min_max":
-                x_train_kfold, x_test_kfold = min_max_normalization(x_train_kfold, x_test_kfold)
-            elif norm == "std":
-                x_train_kfold, x_test_kfold = standardize(x_train_kfold, x_test_kfold)'''
             
-            initial_w = np.ones((x_train_kfold.shape[1], 1))
+            initial_w = np.random.randn(x_train_kfold.shape[1])
+            initial_w.shape = (-1, 1)
             if method == "ridge":
                 w, _ = ridge_regression(tx=x_train_kfold, y=y_train_kfold, lambda_=lambda_)
             elif method == "logistic":
                 y_train_kfold.shape = (-1, 1)
-                w, _ = logistic_regression(y=y_train_kfold, tx=x_train_kfold, initial_w=initial_w, max_iters=2500, gamma=lambda_)
+                w, _ = logistic_regression(y=y_train_kfold, tx=x_train_kfold, initial_w=initial_w, max_iters=max_iters, gamma=lambda_)
             elif method =="SKL":
                 from sklearn.linear_model import LogisticRegression as SLR
                 slr = SLR()
@@ -55,7 +51,6 @@ def cross_validation(x, y, lambdas, poly_degree=-1, norm=None, method="ridge", n
                 w = slr.coef_
                 w.shape = (-1, 1)
             #elif: TO ADD NEW METHODS
-            print()
             
             if method == "logistic" or method == "SKL":
                 loss_method = "logistic"
@@ -87,7 +82,6 @@ def cross_validation(x, y, lambdas, poly_degree=-1, norm=None, method="ridge", n
             print("SCTraining loss: %s, SCTesting loss: %s" % (log_loss(y_train_kfold, train_pred), log_loss(y_test_kfold, test_pred)))"""
             
             
-            
         rmse_tr.append(np.mean(rmse_tr_t))
         rmse_te.append(np.mean(rmse_te_t))
         acc_tr.append(np.mean(acc_tr_t))
@@ -95,6 +89,10 @@ def cross_validation(x, y, lambdas, poly_degree=-1, norm=None, method="ridge", n
     
     if visualize:
         cross_validation_visualization(lambdas, rmse_tr, rmse_te)
+        print("Train loss: %s" % (rmse_tr))
+        print("Test loss: %s" % (rmse_te))
+        print("Train acc: %s" % (np.mean(acc_tr)))
+        print("Test acc: %s" % (np.mean(acc_te)))
     lambda_ind = np.argmin(rmse_te)
     return lambdas[lambda_ind], acc_tr[lambda_ind], acc_te[lambda_ind]
 
