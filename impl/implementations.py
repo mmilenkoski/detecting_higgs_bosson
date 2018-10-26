@@ -269,7 +269,7 @@ def compute_loss(y, tx, w, method=None):
     if method == "rmse":
         return np.sqrt(2* calculate_mse(e))
     #TUKA TREBA MAE ILI MSE???
-    return calculate_mae(e)
+    return calculate_mse(e)
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     """
