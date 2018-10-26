@@ -210,11 +210,9 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
         # update w and get loss
         loss, w = learning_by_gradient_descent(y, tx, w, gamma)
-        if n_iter % 1000 == 0:
+        if n_iter % 100 == 0:
             print("Itteration: %s, Loss: %s" % (n_iter, loss))
         if prev_loss != -1 and np.abs(loss-prev_loss) < threshold:
-            print (prev_loss)
-            print(loss)
             break
         prev_loss = loss
         
@@ -232,13 +230,9 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
         # update w and get loss
         loss, w = learning_by_reg_gradient_descent(y, tx, w, gamma, lambda_)
-        if n_iter % 1000 == 0:
+        if n_iter % 100 == 0:
             print("Itteration: %s, Loss: %s" % (n_iter, loss))
-        if n_iter % 100 = 0:
-            n_iter = n_iter / 10
         if prev_loss != -1 and np.abs(loss-prev_loss) < threshold:
-            print (prev_loss)
-            print(loss)
             break
         prev_loss = loss
         
