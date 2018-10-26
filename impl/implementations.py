@@ -230,7 +230,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     for n_iter in range(max_iters):
         # update w and get loss
         loss, w = learning_by_reg_gradient_descent(y, tx, w, gamma, lambda_)
-        if n_iter % 100 == 0:
+        if n_iter % 500 == 0:
             print("Itteration: %s, Loss: %s" % (n_iter, loss))
         if prev_loss != -1 and np.abs(loss-prev_loss) < threshold:
             break
@@ -402,7 +402,7 @@ def negative_log_likelihood(y, tx, w, lambda_=None):
     term2 = np.multiply(y, pred)
     loss = np.sum(term1-term2)
     if lambda_ is not None:
-        loss = loss + lambda_ * np.dot(w.T, w)
+        loss = loss + lambda_ * np.squeeze(np.dot(w.T, w))
 
     return loss/y.shape[0]
 
@@ -445,9 +445,9 @@ def learning_by_reg_gradient_descent(y, tx, w, gamma, lambda_):
     Do one step of gradient descen using logistic regression.
     Return the loss and the updated w.
     """
-    gradient = compute_gradient_log_reg(y, tx, w)
+    gradient = compute_gradient_log_reg(y, tx, w, lambda_)
     w = w - gamma*gradient
-    loss = negative_log_likelihood(y, tx, w)
+    loss = negative_log_likelihood(y, tx, w, lambda_)
     return loss, w
 
 
