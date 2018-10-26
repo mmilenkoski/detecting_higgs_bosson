@@ -234,6 +234,7 @@ def k_fold_split(y, x, n_splits, seed=0, shuffle=True):
         
 def nan_to_mean(x_train, x_test):
     """
+    OVAJ DA SE BRISHI
     This method is used to replace -999 values with the mean of each column
     :param x: matrix X of training
     :param testx: matrix X of testing
@@ -251,27 +252,44 @@ def nan_to_mean(x_train, x_test):
     
     return x_train, x_test
 
-def nan_to_median(x_train, x_test):
-    """
-    This method is used to replace -999 values with the mean of each column
-    :param x: matrix X of training
-    :param testx: matrix X of testing
-    :return: the two matrix after substitution of each -999 value with the mean
-    """
-    x_train[np.where(x_train == -999)] = np.nan
-    medians = np.nanmedian(x_train, axis=0)
-    inds = np.where(np.isnan(x_train))
-    x_train[inds] = np.take(medians, inds[1])
+def nan_to_median(x):
+    """Replaces the -999 (nan values) with the median of each column.
     
-    x_test[np.where(x_test == -999)] = np.nan
-    medians = np.nanmedian(x_test, axis=0)
-    inds = np.where(np.isnan(x_test))
-    x_test[inds] = np.take(medians, inds[1])
+    Parameters
+    ----------
+    x: ndarray
+        2D array representing the feature matrix. 
+     
+    Returns
+    -------
+    x: ndarray
+        2D array representing the feature matrix cleaned from the -999 (nan) values.
+    """
+    x[np.where(x == -999)] = np.nan
+    medians = np.nanmedian(x, axis=0)
+    inds = np.where(np.isnan(x))
+    x[inds] = np.take(medians, inds[1])
     
-    return x_train, x_test
+    return x
 
 def build_poly(x, degree):
-    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    """Polynomial extension of x.
+    
+    Extends the feature matrix x by adding all polynomials of the features with degree less than or equal to the
+    given degree parameter. Example, if we have a input [x, y] and degree 3 it generates [1, x, x^2, x^3, y, y^2, y^3].
+    
+    Parameters
+    ----------
+    x: ndarray
+        2D array representing the feature matrix. 
+    degree: int
+        the degree of the generated polynomial features.
+     
+    Returns
+    -------
+    poly: ndarray
+        2D array representing the extended matrix.
+    """
     if degree == -1:
         return x
     poly = np.ones((len(x), 1))
