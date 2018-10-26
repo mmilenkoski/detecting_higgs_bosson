@@ -220,6 +220,30 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         
     return w, loss
 
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+    """CHANGE LATER
+    """
+    # Define parameters to store w and loss
+    w = initial_w
+    loss = -1
+    prev_loss = -1
+    threshold = 1e-8
+    
+    for n_iter in range(max_iters):
+        # update w and get loss
+        loss, w = learning_by_reg_gradient_descent(y, tx, w, gamma, lambda_)
+        if n_iter % 1000 == 0:
+            print("Itteration: %s, Loss: %s" % (n_iter, loss))
+        if n_iter % 100 = 0:
+            n_iter = n_iter / 10
+        if prev_loss != -1 and np.abs(loss-prev_loss) < threshold:
+            print (prev_loss)
+            print(loss)
+            break
+        prev_loss = loss
+        
+    return w, loss
+
 
 def compute_gradient_least_sqaures(y, tx, w):
     """Computes the gradient for least sqaures methods.
@@ -361,7 +385,7 @@ def sigmoid(t):
     return np.exp(-np.logaddexp(0, -t))
 
 
-def negative_log_likelihood(y, tx, w):
+def negative_log_likelihood(y, tx, w, lambda_=None):
     """Compute the mean cost by negative log likelihood
     
     Parameters
@@ -383,10 +407,12 @@ def negative_log_likelihood(y, tx, w):
     term1 = np.logaddexp(0, pred)
     term2 = np.multiply(y, pred)
     loss = np.sum(term1-term2)
+    if lambda_ is not None:
+        loss = loss + lambda_ * np.dot(w.T, w)
 
     return loss/y.shape[0]
 
-def compute_gradient_log_reg(y, tx, w):
+def compute_gradient_log_reg(y, tx, w, lambda_=None):
     """Computes the gradient for logistic regression.
     
     Parameters
@@ -406,9 +432,21 @@ def compute_gradient_log_reg(y, tx, w):
     z = np.dot(tx, w)
     predicted = sigmoid(z)
     gradient = np.dot(tx.T, (predicted - y))
+    if lambda_ is not None:
+        gradient = gradient + 2*lambda_*w
     return gradient
 
 def learning_by_gradient_descent(y, tx, w, gamma):
+    """
+    Do one step of gradient descen using logistic regression.
+    Return the loss and the updated w.
+    """
+    gradient = compute_gradient_log_reg(y, tx, w)
+    w = w - gamma*gradient
+    loss = negative_log_likelihood(y, tx, w)
+    return loss, w
+
+def learning_by_reg_gradient_descent(y, tx, w, gamma, lambda_):
     """
     Do one step of gradient descen using logistic regression.
     Return the loss and the updated w.
