@@ -92,10 +92,10 @@ def cross_validation(x, y, lambdas, poly_degree=-1, norm=None, method="ridge", n
         cross_validation_visualization(lambdas, rmse_tr, rmse_te)
         print("Train loss: %s" % (rmse_tr))
         print("Test loss: %s" % (rmse_te))
-        print("Train acc: %s" % (np.mean(acc_tr)))
-        print("Test acc: %s" % (np.mean(acc_te)))
+        #print("Train acc: %s" % (np.mean(acc_tr)))
+        #print("Test acc: %s" % (np.mean(acc_te)))
         print()
-    lambda_ind = np.argmin(rmse_te)
+    lambda_ind = np.argmax(acc_te)
     return lambdas[lambda_ind], acc_tr[lambda_ind], acc_te[lambda_ind]
 
 def train_and_get_predictions(X_train, Y_train, X_test, Y_test, Y_inds, best_lambdas, poly_degree=-1, norm=None, method="ridge", seed=0):
