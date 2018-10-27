@@ -91,15 +91,19 @@ def cross_validation(x, y, lambdas, poly_degree=-1, norm=None, method="ridge", n
     lambda_ind = np.argmax(acc_te)
     return lambdas[lambda_ind], acc_tr[lambda_ind], acc_te[lambda_ind]
 
-def train_and_get_predictions(X_train, Y_train, X_test, Y_test, Y_inds, best_lambdas, poly_degree=-1, norm=None, method="ridge", seed=0):
+def train_and_get_predictions(X_train, Y_train, X_test, Y_test, Y_inds, parameters, poly_degree=-1, norm=None, method="logistic", seed=0, max_iters=100):
+    np.random.seed(seed)
     predictions = np.ones(568238)
     train_accuracy = []
-    for i, lambda_ in enumerate(best_lambdas):
+            
+    for i, param in enumerate(parameters):
         x_train = X_train[i].copy()
         y_train = Y_train[i]
+        y_train = (1 + y_train) / 2
+        #transforming labels (-1 -> 0, 1 -> 1) to train the logistic regressions
         x_test = X_test[i].copy()
         y_test = Y_test[i]
-        
+   
         if norm == "min_max":
             x_train, x_test = min_max_normalization(x_train, x_test)
         elif norm == "std":
@@ -108,14 +112,22 @@ def train_and_get_predictions(X_train, Y_train, X_test, Y_test, Y_inds, best_lam
         x_train = build_poly(x_train, poly_degree)
         x_test = build_poly(x_test, poly_degree)
         
-        if method == "ridge":
-            w = ridge_regression(tx=x_train, y=y_train, lambda_=lambda_)
-        #elif: ADD NEW METHODS
+        initial_w = np.random.randn(x_train.shape[1])
+        initial_w.shape = (-1, 1)
+        if method == "logistic":
+                y_train.shape = (-1, 1)
+                w, _ = logistic_regression(y=y_train, tx=x_train, initial_w=initial_w, max_iters=max_iters, gamma=param)
+        elif method == "reg_logistic":
+                y_train.shape = (-1, 1)
+                w, _ = reg_logistic_regression(y=y_train, tx=x_train, initial_w=initial_w, max_iters=max_iters, gamma=param[0], lambda_=param[1])
         
-        train_pred = predict_labels(w, x_train, method)
+        train_pred = predict_labels(w, x_train, "logistic")
+        train_pred = (1 + train_pred) / 2
         train_accuracy.append(np.sum(y_train == train_pred)*1.0/len(y_train))
         
-        predictions[Y_inds[i]] = predict_labels(w, x_test, method)
+        pred = predict_labels(w, x_test, method)
+        pred.shape= (-1, )
+        predictions[Y_inds[i]] = pred
     
     print(train_accuracy)
     print(np.mean(train_accuracy))
