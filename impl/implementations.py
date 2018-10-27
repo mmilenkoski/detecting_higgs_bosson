@@ -1,6 +1,3 @@
-from impl.costs import *
-from impl.gradient_descent import *
-from impl.helpers import *
 import numpy as np
 
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
@@ -13,18 +10,18 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     tx: ndarray
         2D array containing the training data.
     initial_w: ndarray
-        1D array containing the initial weight vector
+        1D array containing the initial weight vector.
     max_iters: int
-        number of steps to run the gradient descent
+        Maximum number of steps to run the gradient descent.
     gamma: float
-        step size
+        Learning rate for gradient descent.
      
     Returns
     -------
     w: ndarray
-        1D array containing the final weight vector
+        1D array containing the final weight vector.
     loss: float
-        loss corresponding to the last weight vector
+        Loss corresponding to the last weight vector.
     """
     # Define parameters to store w and loss
     w = initial_w
@@ -50,21 +47,20 @@ def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
     tx: ndarray
         2D array containing the training data.
     initial_w: ndarray
-        1D array containing the initial weight vector
+        1D array containing the initial weight vector.
     batch_size: int
-        number of training examples used in one iteration of stochastic
-        gradient descent
+        Number of training examples used in one iteration of stochastic gradient descent.
     max_iters: int
-        number of steps to run the gradient descent
+        Maximum number of steps to run the gradient descent.
     gamma: float
-        step size
+        Learning rate for gradient descent.
      
     Returns
     -------
     w: ndarray
-        1D array containing the final weight vector
+        1D array containing the final weight vector.
     loss: float
-        loss corresponding to the last weight vector
+        Loss corresponding to the last weight vector.
     """
     # Define parameters to store w and loss
     w = initial_w
@@ -94,9 +90,9 @@ def least_squares(y, tx):
     Returns
     -------
     w: ndarray
-        1D array containing the optimal weight vector
+        1D array containing the optimal weight vector.
     loss: float
-        loss corresponding to the optimal weight vector
+        Loss corresponding to the optimal weight vector.
     """
     # calculate optimal weights
     tx_transpose = np.transpose(tx)
@@ -118,14 +114,14 @@ def ridge_regression(y, tx, lambda_):
     tx: ndarray
         2D array containing the training data.
     lambda_: float
-        Regularization parameter
+        Regularization parameter.
     
     Returns
     -------
     w: ndarray
-        1D array containing the optimal weight vector
+        1D array containing the optimal weight vector.
     loss: float
-        loss corresponding to the optimal weight vector   
+        Loss corresponding to the optimal weight vector.
     """
     # number of training examples
     N = tx.shape[0]
@@ -142,44 +138,8 @@ def ridge_regression(y, tx, lambda_):
     
     return w, loss
 
-def logistic_regression_sgd(y, tx, initial_w, max_iters, gamma):
-    """Computes least squares using gradient descent
-    
-    Parameters
-    ----------
-    y: ndarray
-        1D array containing the correct labels of the training data. 
-    tx: ndarray
-        2D array containing the training data.
-    initial_w: ndarray
-        1D array containing the initial weight vector
-    max_iters: int
-        number of steps to run the gradient descent
-    gamma: float
-        step size
-     
-    Returns
-    -------
-    w: ndarray
-        1D array containing the final weight vector
-    loss: float
-        loss corresponding to the last weight vector
-    """
-    # Define parameters to store w and loss
-    w = initial_w
-    loss = -1
-    
-    for n_iter in range(max_iters):
-        for y_batch, tx_batch in batch_iter(y, tx, batch_size=1):
-            # update w and get loss
-            loss, w = learning_by_gradient_descent(y_batch, tx_batch, w, gamma)
-            if n_iter % 1000 == 0:
-                print("Itteration: %s, Loss: %s" % (n_iter, loss))
-        
-    return w, loss
-
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
-    """Logistic regression using gradient descent
+    """Implements logistic regression using gradient descent
     
     Parameters
     ----------
@@ -188,30 +148,30 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     tx: ndarray
         2D array containing the training data.
     initial_w: ndarray
-        1D array containing the initial weight vector
+        1D array containing the initial weight vector.
     max_iters: int
-        number of steps to run the gradient descent
+        Maximum number of steps to run the gradient descent.
     gamma: float
-        step size
+        Learning rate.
      
     Returns
     -------
     w: ndarray
-        1D array containing the final weight vector
+        1D array containing the final weight vector.
     loss: float
-        loss corresponding to the last weight vector
+        Loss corresponding to the last weight vector.
     """
     # Define parameters to store w and loss
     w = initial_w
     loss = -1
     prev_loss = -1
+    # Define threshold for early stopping of gradient descent
     threshold = 1e-8
     
     for n_iter in range(max_iters):
-        # update w and get loss
+        # update w and calculate loss
         loss, w = learning_by_gradient_descent(y, tx, w, gamma)
-        if n_iter % 100 == 0:
-            print("Itteration: %s, Loss: %s" % (n_iter, loss))
+        # stop the gradient descent if the difference between the last two losses is below the threshold
         if prev_loss != -1 and np.abs(loss-prev_loss) < threshold:
             break
         prev_loss = loss
@@ -219,19 +179,41 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     return w, loss
 
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
-    """CHANGE LATER
+    """Implements regularized logistic regression using gradient descent
+    
+    Parameters
+    ----------
+    y: ndarray
+        1D array containing the correct labels of the training data. 
+    tx: ndarray
+        2D array containing the training data.
+    lambda_: float
+        Regularization parameter.
+    initial_w: ndarray
+        1D array containing the initial weight vector.
+    max_iters: int
+        Maximum number of steps to run the gradient descent.
+    gamma: float
+        Learning rate.
+     
+    Returns
+    -------
+    w: ndarray
+        1D array containing the final weight vector.
+    loss: float
+        Loss corresponding to the last weight vector.
     """
     # Define parameters to store w and loss
     w = initial_w
     loss = -1
     prev_loss = -1
+    # Define threshold for early stopping of gradient descent
     threshold = 1e-8
     
     for n_iter in range(max_iters):
-        # update w and get loss
+        # update w and calculate loss
         loss, w = learning_by_reg_gradient_descent(y, tx, w, gamma, lambda_)
-        if n_iter % 500 == 0:
-            print("Itteration: %s, Loss: %s" % (n_iter, loss))
+        # stop the gradient descent if the difference between the last two losses is below the threshold
         if prev_loss != -1 and np.abs(loss-prev_loss) < threshold:
             break
         prev_loss = loss
@@ -240,7 +222,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
 
 
 def compute_gradient_least_sqaures(y, tx, w):
-    """Computes the gradient for least sqaures methods.
+    """Computes the gradient for least squares.
     
     Parameters
     ----------
@@ -249,21 +231,21 @@ def compute_gradient_least_sqaures(y, tx, w):
     tx: ndarray
         2D array containing the training data.
     w: ndarray
-        1D array containing the weight vector
+        1D array containing the weight vector.
      
     Returns
     -------
     grad: ndarray
-        1D array containing the gradient
+        1D array containing the gradient.
     err: ndarray
-        1D array containing the errors for each training point
+        1D array containing the error for each training example.
     """
     err = y - tx.dot(w)
     grad = -tx.T.dot(err) / len(err)
     return grad, err
 
 def calculate_mse(e):
-    """Calculate the mean absolute error for vector e.
+    """Calculates the mean square error.
     
     Parameters
     ----------
@@ -272,8 +254,8 @@ def calculate_mse(e):
      
     Returns
     -------
-    mse: float64
-        the mae computed on the input.
+    mse: float
+        Mean squared error.
     """
     n = e.shape[0]
     mse = (1/2)*np.sum(e**2)/n
@@ -281,7 +263,7 @@ def calculate_mse(e):
 
 
 def calculate_mae(e):
-    """Calculate the mean square error for vector e.
+    """Calculates the mean absolute error.
     
     Parameters
     ----------
@@ -290,8 +272,8 @@ def calculate_mae(e):
      
     Returns
     -------
-    mse: float64
-        the mse computed on the input.
+    mae: float
+        Mean absolute error.
     """
     n = e.shape[0]
     mae = np.sum(np.abs(e))/n
@@ -299,7 +281,7 @@ def calculate_mae(e):
 
 
 def compute_loss(y, tx, w, method=None):
-    """Calculate the loss using rmse, rmae or mean negative log likelihood for logistic regression.
+    """Calculates the loss using negative log likelihood, rmse, mae or mse.
 
     Parameters
     ----------
@@ -309,23 +291,34 @@ def compute_loss(y, tx, w, method=None):
         2D array containing the training data.
     w: ndarray
         1D array containing the weight vector
-     
+    method: string, optional
+        Method for calculating the loss. 
+        If 'logistic', calculate Negative Log-Likelihood.
+        If 'rmse', calculates Root Mean Squared Error.
+        If 'mae', calculates Mean Absolute Error.
+        If None (default), calculates Mean Squared Error.
+        
     Returns
     -------
     loss: float64
-        the corresponding mean loss computed on the input
+        The corresponding loss computed on the input.
     """
-    if method == "logistic" or method == "SKL":
+    e = y - np.dot(tx, w)
+    
+    # return the correct loss based on the value of `method` or mse by default.
+    if method == "logistic":
         return negative_log_likelihood(y, tx, w)
     
-    e = y - np.dot(tx, w)
     if method == "rmse":
         return np.sqrt(2*calculate_mse(e))
     
-    return np.sqrt(2*calculate_mae(e))
+    if method == "mae":
+        return calculate_mae(e)
+    
+    return calculate_mse(e)
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
-    """Generate a minibatch iterator for a dataset.
+    """Generates a minibatch iterator for a dataset.
     
     Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
     Outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.
@@ -334,18 +327,23 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     for minibatch_y, minibatch_tx in batch_iter(y, tx, 32):
         <DO-SOMETHING>
     
-        Parameters
+    Parameters
     ----------
     y: ndarray
         1D array containing the correct labels of the training data. 
     tx: ndarray
         2D array containing the training data.
     batch_size: int
-        integer representing the size of the batch returned by the iterator.
+        Integer representing the size of the batch returned by the iterator.
     num_batches: int
-        integer representing the number of batches to be returned.
+        Integer representing the number of batches to be returned.
     shuffle: bool
-        boolean value indicating if the data should be shuffled when returned as mini batches.
+        Boolean value indicating if the data should be shuffled when returned as mini batches.
+        
+    Yields
+    ------
+    tuple
+         Tuple containing the next batch of training examples for gradient descent in the form (labels, training_data).
     """
     data_size = len(y)
 
@@ -363,24 +361,24 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
             
 def sigmoid(t):
-    """Applys sigmoid function on t.
+    """Implements sigmoid function.
     
     Parameters
     ----------
     y: ndarray
-        nD array containing values. 
+        Input for the sigmoid function.
      
     Returns
     -------
-    sigmoid(t): ndarray
-        nD array containing the input values transformed with the sigmoid function
-    
+    result: ndarray
+        Transformed values using the sigmoid function.
     """
-    return np.exp(-np.logaddexp(0, -t))
+    result = np.exp(-np.logaddexp(0, -t))
+    return result
 
 
 def negative_log_likelihood(y, tx, w, lambda_=None):
-    """Compute the mean cost by negative log likelihood
+    """Calculates the mean negative log-likelihood loss.
     
     Parameters
     ----------
@@ -390,24 +388,35 @@ def negative_log_likelihood(y, tx, w, lambda_=None):
         2D array containing the training data.
     w: ndarray
         1D array containing the weight vector.
+    lambda_: float, optional
+        Regularization parameter for regularized logistic regression. 
+        If None (default), computes loss for basic logistic regression.
      
     Returns
     -------
-    loss: float64
-        the mean NLL cost computed on the input
+    loss: float
+        Mean negative log-likelihood loss.
     """
+    # calculate basic loss
     y.shape = (-1, 1)
     pred = tx.dot(w)
+    # calculates log[1 + e^(pred)]
     term1 = np.logaddexp(0, pred)
+    # element-wise multiplication
     term2 = np.multiply(y, pred)
     loss = np.sum(term1-term2)
+    
+    # add regularization term
     if lambda_ is not None:
         loss = loss + lambda_ * np.squeeze(np.dot(w.T, w))
 
     return loss/y.shape[0]
 
 def compute_gradient_log_reg(y, tx, w, lambda_=None):
-    """Computes the gradient for logistic regression.
+    """Computes the gradient for (regularized) logistic regression.
+    
+    If the regularization parameter is None, the function computes the gradient of logistic regression. Otherwise, it computes 
+    the gradient of regularized logistic regression, using the value of lambda_ as regularization parameter.
     
     Parameters
     ----------
@@ -416,24 +425,44 @@ def compute_gradient_log_reg(y, tx, w, lambda_=None):
     tx: ndarray
         2D array containing the training data.
     w: ndarray
-        1D array containing the weight vector
-     
+        1D array containing the weight vector.
+    lambda_: float, optional
+        Regularization parameter for regularized logistic regression. 
+        If None (default), computes gradient for basic logistic regression.
+    
     Returns
     -------
-    grad: ndarray
+    gradient: ndarray
         1D array containing the gradient
     """
+    # calculate basic gradient
     z = np.dot(tx, w)
     predicted = sigmoid(z)
     gradient = np.dot(tx.T, (predicted - y))
+    
+    # add regularization term
     if lambda_ is not None:
         gradient = gradient + 2*lambda_*w
     return gradient
 
 def learning_by_gradient_descent(y, tx, w, gamma):
-    """
-    Do one step of gradient descen using logistic regression.
-    Return the loss and the updated w.
+    """Implements one step of gradient descent for logistic regression and calculates the loss.
+    
+    Parameters
+    ----------
+    y: ndarray
+        1D array containing the correct labels of the training data. 
+    tx: ndarray
+        2D array containing the training data.
+    w: ndarray
+        1D array containing the weight vector.
+        
+    Returns
+    -------
+    w: ndarray
+        1D array containing the updated weight vector.
+    loss: float
+        Loss corresponding to the updated weight vector.
     """
     gradient = compute_gradient_log_reg(y, tx, w)
     w = w - gamma*gradient
@@ -441,16 +470,27 @@ def learning_by_gradient_descent(y, tx, w, gamma):
     return loss, w
 
 def learning_by_reg_gradient_descent(y, tx, w, gamma, lambda_):
-    """
-    Do one step of gradient descen using logistic regression.
-    Return the loss and the updated w.
+    """Implements one step of gradient descent for regularized logistic regression and calculates the loss.
+    
+    Parameters
+    ----------
+    y: ndarray
+        1D array containing the correct labels of the training data. 
+    tx: ndarray
+        2D array containing the training data.
+    w: ndarray
+        1D array containing the weight vector.
+    lambda_: float
+        Regularization parameter.
+        
+    Returns
+    -------
+    w: ndarray
+        1D array containing the updated weight vector.
+    loss: float
+        Loss corresponding to the updated weight vector.
     """
     gradient = compute_gradient_log_reg(y, tx, w, lambda_)
     w = w - gamma*gradient
     loss = negative_log_likelihood(y, tx, w, lambda_)
     return loss, w
-
-
-
-
-
