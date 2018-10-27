@@ -109,7 +109,7 @@ data_columns_splited = {0: ['DER_mass_MMC',
   'PRI_jet_all_pt']}
 
 def get_idx_columns_for_PRI_jet_num():
-    """Helper function for split_data_by_PRI_jet_num.
+    """Helper function for split_data_in_four.
     
     After splitting the data on subsets by the value of PRI_jet_num some of the columns have only nan values.
     This function retruns the column indexes of the valid columns for every subset.
@@ -139,7 +139,7 @@ def data_columns_get_index(column_name):
     """
     return data_columns.index(column_name)
 
-def split_data_by_PRI_jet_num(x, y, ids):
+def split_data_in_four(x, y, ids):
     """Splits the data by the value of PRI_jet_num.
     
     Splits the data by the value of the PRI_jet_num (0, 1, 2, 3). Returns dictionaries where the keys are the value of
@@ -184,7 +184,7 @@ def split_data_by_PRI_jet_num(x, y, ids):
     return x_separated, y_separated, ids_separated, indx
 
 def split_data_by_DER_mass_MMC_helper(x, y, ids, indx):
-    """Helper function used by split_data_by_DER_mass_MMC.
+    """Helper function used by split_data_in_eight.
     
     It splits the data in two subsets based on the value of the DER_mass_MMC, the first one contains real values for the mass
     and the second has "nan" mass.
@@ -229,7 +229,7 @@ def split_data_by_DER_mass_MMC_helper(x, y, ids, indx):
 
     return x_separated, y_separated, ids_separated, indx_separated
 
-def split_data_by_DER_mass_MMC(x, y, ids):
+def split_data_in_eight(x, y, ids):
     """Splits the data by the value of PRI_jet_num and by the DER_mass_MMC.
     
     After spliting the data by the PRI_jet_num it can also be splitted by the value of DER_mass_MMC into two subsets where the
@@ -692,4 +692,134 @@ def adjust_cartesian_features(x_separated):
     for model in range(len(x_separated)):
         # In order to return the variables in the same format, we need to transpose the data again
         x_separated[model] = np.transpose(x_separated[model])
+    return x_separated
+
+
+
+
+
+
+def get_angles_for_jet(i):
+    split_0 = [9, 10, 11, 12, 13, 14]
+    split_1 = [9, 10, 11, 12, 13, 14, 18, 19, 20]
+    split_2 = [13, 14, 15, 16, 17, 18, 22, 23, 24, 25, 26 ,27]
+    
+    if i in [0, 1]:
+        angels = split_0
+    if i in [2, 3]:
+        angels = split_1
+    if i in [4, 5, 6, 7]:
+        angels = split_2
+    
+    if i % 2 == 0:
+        return angels
+    else:
+        return [x-1 for x in angels]
+    
+def get_phi_angles_for_jet(i):
+    split_0 = [11, 14, 16]
+    split_1 = [11, 14, 16, 20]
+    split_2 = [15, 18, 20, 24, 27]
+    
+    if i in [0, 1]:
+        angels = split_0
+    if i in [2, 3]:
+        angels = split_1
+    if i in [4, 5, 6, 7]:
+        angels = split_2
+    
+    if i % 2 == 0:
+        return angels
+    else:
+        return [x-1 for x in angels]
+
+
+def adjust_cartesian_features_davor(x_separated):
+    print("OK")
+    """
+    This function fixes the problem of having angles as features. Obviosly, having angles as features doesn't help
+    As the apsolutie direction in which particles leave the detector is irelevant, we simply take PRI_tau_phi as
+    a reference angle, and substract it from all the other angles
+    Then we delete all the angles (we don't want them as features)
+    Instead we use sin() and cos() of all the angles as features. Note that this is sin() and cos() of all the
+    relative angles, where PRI_tau_phi has already been substracted
+
+        Parameters
+        ----------
+        x_separated: dict
+            Dictionary using the model number as a key (integers from 0 to 7)
+            Each element in the dictionary is a ndarray (2D array).
+            The columns are the corresponding features (mass, angles, ...),
+            while the rows correspond to different events
+
+        Returns
+        -------
+        x_separated: dict
+            A table in the same format, with adjusted features
+        """
+    
+    for model in range(8):
+        angel_idx = get_angles_for_jet(model)
+        
+        for i in range(len(get_angles_for_jet(0))//3):
+            pt = x_separated[model][:, angel_idx[i*3 + 0]].copy()
+            eta = x_separated[model][:, angel_idx[i*3 + 1]].copy()
+            phi = x_separated[model][:, angel_idx[i*3 + 2]].copy()
+            
+            x_separated[model][:, angel_idx[i*3 + 0]] = pt * np.sin(phi)
+            x_separated[model][:, angel_idx[i*3 + 1]] = pt * np.cos(phi)
+            x_separated[model][:, angel_idx[i*3 + 2]] = pt * np.sinh(eta)
+            
+    return x_separated
+
+def adjust_cartesian_features_davor_samuel(x_separated):
+    print("OK")
+    """
+    This function fixes the problem of having angles as features. Obviosly, having angles as features doesn't help
+    As the apsolutie direction in which particles leave the detector is irelevant, we simply take PRI_tau_phi as
+    a reference angle, and substract it from all the other angles
+    Then we delete all the angles (we don't want them as features)
+    Instead we use sin() and cos() of all the angles as features. Note that this is sin() and cos() of all the
+    relative angles, where PRI_tau_phi has already been substracted
+
+        Parameters
+        ----------
+        x_separated: dict
+            Dictionary using the model number as a key (integers from 0 to 7)
+            Each element in the dictionary is a ndarray (2D array).
+            The columns are the corresponding features (mass, angles, ...),
+            while the rows correspond to different events
+
+        Returns
+        -------
+        x_separated: dict
+            A table in the same format, with adjusted features
+        """
+    
+    for model in range(8):
+        angel_idx = get_angles_for_jet(model)
+        
+        #save the phi angles for later
+        phi_idx = get_phi_angles_for_jet(model)
+        tau_phi = x_separated[model][:, phi_idx[0]].copy()
+        other_phi = {}
+        for idx in phi_idx[1:]:
+            other_phi[idx] = x_separated[model][:, idx].copy()
+        
+        #computing the momentum
+        for i in range(len(get_angles_for_jet(0))//3):
+            pt = x_separated[model][:, angel_idx[i*3 + 0]].copy()
+            eta = x_separated[model][:, angel_idx[i*3 + 1]].copy()
+            phi = x_separated[model][:, angel_idx[i*3 + 2]].copy()
+            
+            x_separated[model][:, angel_idx[i*3 + 0]] = pt * np.sin(phi)
+            x_separated[model][:, angel_idx[i*3 + 1]] = pt * np.cos(phi)
+            x_separated[model][:, angel_idx[i*3 + 2]] = pt * np.sinh(eta)
+        
+        #samules computations
+        for i in phi_idx[1:]:
+            first_angel = other_phi[i]
+            x_separated[model] = np.c_[x_separated[model], np.sin(first_angel - tau_phi)]
+            x_separated[model] = np.c_[x_separated[model], np.cos(first_angel - tau_phi)]
+            
     return x_separated
