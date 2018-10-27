@@ -109,15 +109,62 @@ data_columns_splited = {0: ['DER_mass_MMC',
   'PRI_jet_all_pt']}
 
 def get_idx_columns_for_PRI_jet_num():
+    """Helper function for split_data_by_PRI_jet_num.
+    
+    After splitting the data on subsets by the value of PRI_jet_num some of the columns have only nan values.
+    This function retruns the column indexes of the valid columns for every subset.
+    
+    Returns
+    -------
+    indexes: dict
+        Dictionary containing the indexes of the columns.
+    """
     columns_for_PRI_jet_num = {}
     for i in range(4):
         columns_for_PRI_jet_num[i] = [x in data_columns_splited[i] for x in data_columns]
     return columns_for_PRI_jet_num
 
-def data_columns_get_index(item):
-    return data_columns.index(item)
+def data_columns_get_index(column_name):
+    """For a given column_name returns the corresponding column index in the data matrix.
+    
+    Parameters
+    ----------
+    column_name: string
+        String representing the name of the column.
+    
+    Returns
+    -------
+    index: int
+        Integer representing the column index in the data matrix.
+    """
+    return data_columns.index(column_name)
 
 def split_data_by_PRI_jet_num(x, y, ids):
+    """Splits the data by the value of PRI_jet_num.
+    
+    Splits the data by the value of the PRI_jet_num (0, 1, 2, 3). Returns dictionaries where the keys are the value of
+    PRI_jet_num, and the values are the corresponding data matrix/labels/inds.
+    
+    Parameters
+    ----------
+    x: ndarray
+        2D array representing the data. 
+    y: ndarray
+        1D array representing the labels of the data.
+    ids: ndarray
+        1D array representing the ids of the data.
+    
+    Returns
+    -------
+    x_separated: dict
+        Dictionary containing the splitted data in 2D array.
+    y_separated: dict
+        Dictionary containing the splitted labels in 1D array.
+    ids_separated: dict
+        Dictionary containing the splitted ids in 1D arrays.
+    indx: dict
+        Dictionary containing the original indexes of the splited data in the input data matrix.
+    """
     columns = get_idx_columns_for_PRI_jet_num()
     pri_jet_num = x[:,data_columns_get_index("PRI_jet_num")]
     
@@ -137,6 +184,31 @@ def split_data_by_PRI_jet_num(x, y, ids):
     return x_separated, y_separated, ids_separated, indx
 
 def split_data_by_DER_mass_MMC_helper(x, y, ids, indx):
+    """Helper function used by split_data_by_DER_mass_MMC.
+    
+    It splits the data in two subsets based on the value of the DER_mass_MMC, the first one contains real values for the mass
+    and the second has "nan" mass.
+    
+    Parameters
+    ----------
+    x: ndarray
+        2D array representing the data. 
+    y: ndarray
+        1D array representing the labels of the data.
+    ids: ndarray
+        1D array representing the ids of the data.
+    
+    Returns
+    -------
+    x_separated: dict
+        Dictionary containing the splitted data in 2D array.
+    y_separated: dict
+        Dictionary containing the splitted labels in 1D array.
+    ids_separated: dict
+        Dictionary containing the splitted ids in 1D arrays.
+    indx: dict
+        Dictionary containing the original indexes of the splited data in the input data matrix.
+    """
     null_ids = x[:, 0] == -999
     not_null_ids = ~null_ids
     
@@ -158,6 +230,31 @@ def split_data_by_DER_mass_MMC_helper(x, y, ids, indx):
     return x_separated, y_separated, ids_separated, indx_separated
 
 def split_data_by_DER_mass_MMC(x, y, ids):
+    """Splits the data by the value of PRI_jet_num and by the DER_mass_MMC.
+    
+    After spliting the data by the PRI_jet_num it can also be splitted by the value of DER_mass_MMC into two subsets where the
+    first one contains real values for the mass and the second subsets has "nan" mass.
+    
+    Parameters
+    ----------
+    x: ndarray
+        2D array representing the data. 
+    y: ndarray
+        1D array representing the labels of the data.
+    ids: ndarray
+        1D array representing the ids of the data.
+    
+    Returns
+    -------
+    x_separated: dict
+        Dictionary containing the splitted data in 2D array.
+    y_separated: dict
+        Dictionary containing the splitted labels in 1D array.
+    ids_separated: dict
+        Dictionary containing the splitted ids in 1D arrays.
+    indx: dict
+        Dictionary containing the original indexes of the splited data in the input data matrix.
+    """
     x_separated = {}
     y_separated = {}
     ids_separated = {}
@@ -178,7 +275,25 @@ def split_data_by_DER_mass_MMC(x, y, ids):
     return x_separated, y_separated, ids_separated, indx_separated
 
 def standardize(x_train, x_test):
-    """Standardize the original data set."""
+    """Standardizing the test and train data.
+    
+    Standardizing each column of the test and train data by subtracting from them the mean value of the training data
+    and dividing each column with the standard deviation of the traning data.
+    
+    Parameters
+    ----------
+    x_train: ndarray
+        2D array representing the train feature matrix. 
+    x_test: ndarray
+        2D array representing the test feature matrix.
+    
+    Returns
+    -------
+    x_train: ndarray
+        2D array representing the standardized train feature matrix.
+    x_test: ndarray
+        2D array representing the standardized test feature matrix.
+    """
     assert x_train.shape[1] == x_test.shape[1]
     mean_x = np.mean(x_train, axis=0)
     x_train = x_train - mean_x
@@ -192,8 +307,25 @@ def standardize(x_train, x_test):
     return x_train, x_test
 
 def min_max_normalization(x_train, x_test):
-    """Standardize the original data set."""
+    """Min_max standardization of the test and train data.
     
+    Standardizing the values of each column of the test and train data to lie between zero and one, i.e. the minimum value
+    is scaled to zero, the maximum value is scaled to one and the other values lie in between.
+    
+    Parameters
+    ----------
+    x_train: ndarray
+        2D array representing the train feature matrix. 
+    x_test: ndarray
+        2D array representing the test feature matrix.
+    
+    Returns
+    -------
+    x_train: ndarray
+        2D array representing the min_max standardized train feature matrix.
+    x_test: ndarray
+        2D array representing the min_max standardized test feature matrix.
+    """
     assert x_train.shape[1] == x_test.shape[1]
     min_x = np.min(x_train, axis=0)
     max_x = np.max(x_train, axis=0)
@@ -233,12 +365,21 @@ def k_fold_split(y, x, n_splits, seed=0, shuffle=True):
         yield tr_indice, te_indice
         
 def nan_to_mean(x_train, x_test):
-    """
-    OVAJ DA SE BRISHI
-    This method is used to replace -999 values with the mean of each column
-    :param x: matrix X of training
-    :param testx: matrix X of testing
-    :return: the two matrix after substitution of each -999 value with the mean
+    """Replaces the -999 (nan values) with the mean of each column.
+    
+    Parameters
+    ----------
+    x_train: ndarray
+        2D array representing the train feature matrix. 
+    x_test: ndarray
+        2D array representing the test feature matrix.
+    
+    Returns
+    -------
+    x_train: ndarray
+        2D array representing the train feature matrix cleaned from the -999 (nan) values.
+    x_test: ndarray
+        2D array representing the test feature matrix cleaned from the -999 (nan) values.
     """
     x_train[np.where(x_train == -999)] = np.nan
     means = np.nanmean(x_train, axis=0)
@@ -291,7 +432,7 @@ def build_poly(x, degree):
     x: ndarray
         2D array representing the feature matrix. 
     degree: int
-        the degree of the generated polynomial features.
+        The degree of the generated polynomial features.
      
     Returns
     -------
@@ -324,12 +465,12 @@ def index_of_PRI_tau_phi(model):
         Parameters
         ----------
         model: int
-            integer of the model number (see list above).
+            Integer of the model number (see list above).
 
         Returns
         -------
         variable: integer
-            integer of the position of the variable in the given model
+            Integer of the position of the variable in the given model
         """
     if model == 0:
         return 11
@@ -358,12 +499,12 @@ def index_of_PRI_lep_phi(model):
         Parameters
         ----------
         model: int
-            integer of the model number (see list above).
+            Integer of the model number (see list above).
 
         Returns
         -------
         variable: integer
-            integer of the position of the variable in the given model
+            Integer of the position of the variable in the given model
         """
     if model == 0:
         return 14
@@ -392,12 +533,12 @@ def index_of_PRI_met_phi(model):
         Parameters
         ----------
         model: int
-            integer of the model number (see list above).
+            Integer of the model number (see list above).
 
         Returns
         -------
         variable: integer
-            integer of the position of the variable in the given model
+            Integer of the position of the variable in the given model
         """
     if model == 0:
         return 16
@@ -425,12 +566,12 @@ def index_of_PRI_jet_leading_phi(model):
         Parameters
         ----------
         model: int
-            integer of the model number (see list above).
+            Integer of the model number (see list above).
 
         Returns
         -------
         variable: integer
-            integer of the position of the variable in the given model
+            Integer of the position of the variable in the given model
         """
     if model == 0:
         print('You called a non-existing parameter')
@@ -461,12 +602,12 @@ def index_of_PRI_jet_subleading_phi(model):
         Parameters
         ----------
         model: int
-            integer of the model number (see list above).
+            Integer of the model number (see list above).
 
         Returns
         -------
         variable: integer
-            integer of the position of the variable in the given model
+            Integer of the position of the variable in the given model
         """
     if model == 0:
         print('You called a non-existing parameter')
@@ -502,7 +643,7 @@ def adjust_cartesian_features(x_separated):
         Parameters
         ----------
         x_separated: dict
-            dictionary using the model number as a key (integers from 0 to 7)
+            Dictionary using the model number as a key (integers from 0 to 7)
             Each element in the dictionary is a ndarray (2D array).
             The columns are the corresponding features (mass, angles, ...),
             while the rows correspond to different events
@@ -552,16 +693,3 @@ def adjust_cartesian_features(x_separated):
         # In order to return the variables in the same format, we need to transpose the data again
         x_separated[model] = np.transpose(x_separated[model])
     return x_separated
-
-
-
-
-
-
-
-
-
-
-
-
-
