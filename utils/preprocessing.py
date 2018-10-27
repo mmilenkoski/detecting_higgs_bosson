@@ -252,25 +252,33 @@ def nan_to_mean(x_train, x_test):
     
     return x_train, x_test
 
-def nan_to_median(x):
+def nan_to_median(x_train, x_test):
     """Replaces the -999 (nan values) with the median of each column.
     
     Parameters
     ----------
-    x: ndarray
-        2D array representing the feature matrix. 
-     
+    x_train: ndarray
+        2D array representing the train feature matrix. 
+    x_test: ndarray
+        2D array representing the test feature matrix.
+    
     Returns
     -------
-    x: ndarray
-        2D array representing the feature matrix cleaned from the -999 (nan) values.
+    x_train: ndarray
+        2D array representing the train feature matrix cleaned from the -999 (nan) values.
+    x_test: ndarray
+        2D array representing the test feature matrix cleaned from the -999 (nan) values.
     """
-    x[np.where(x == -999)] = np.nan
-    medians = np.nanmedian(x, axis=0)
-    inds = np.where(np.isnan(x))
-    x[inds] = np.take(medians, inds[1])
+    x_train[np.where(x_train == -999)] = np.nan
+    medians = np.nanmedian(x_train, axis=0)
+    inds = np.where(np.isnan(x_train))
+    x_train[inds] = np.take(medians, inds[1])
     
-    return x
+    x_test[np.where(x_test == -999)] = np.nan
+    inds = np.where(np.isnan(x_test))
+    x_test[inds] = np.take(medians, inds[1])
+    
+    return x_train, x_test
 
 def build_poly(x, degree):
     """Polynomial extension of x.
@@ -521,14 +529,18 @@ def adjust_cartesian_features(x_separated):
         # Here we add all the new features
         x_separated[model] = np.vstack((x_separated[model], np.sin(PRI_lep_phi - PRI_tau_phi)))
         x_separated[model] = np.vstack((x_separated[model], np.cos(PRI_lep_phi - PRI_tau_phi)))
+        #x_separated[model] = np.vstack((x_separated[model], np.sinh(PRI_lep_phi - PRI_tau_phi))) #od mene
         x_separated[model] = np.vstack((x_separated[model], np.sin(PRI_met_phi - PRI_tau_phi)))
         x_separated[model] = np.vstack((x_separated[model], np.cos(PRI_met_phi - PRI_tau_phi)))
+        #x_separated[model] = np.vstack((x_separated[model], np.sinh(PRI_met_phi - PRI_tau_phi))) #od mene
         if model > 1:
             x_separated[model] = np.vstack((x_separated[model], np.sin(PRI_jet_leading_phi - PRI_tau_phi)))
             x_separated[model] = np.vstack((x_separated[model], np.cos(PRI_jet_leading_phi - PRI_tau_phi)))
+            #x_separated[model] = np.vstack((x_separated[model], np.sinh(PRI_jet_leading_phi - PRI_tau_phi))) #od mene
         if model > 3:
             x_separated[model] = np.vstack((x_separated[model], np.sin(PRI_jet_subleading_phi - PRI_tau_phi)))
             x_separated[model] = np.vstack((x_separated[model], np.cos(PRI_jet_subleading_phi - PRI_tau_phi)))
+            #x_separated[model] = np.vstack((x_separated[model], np.sinh(PRI_jet_subleading_phi - PRI_tau_phi))) #od mene
         # Here we delete all the angles, as we don't want to have them as features any more
         if model > 3:
             x_separated[model] = np.delete(x_separated[model], (index_of_PRI_tau_phi(model), index_of_PRI_lep_phi(model), index_of_PRI_met_phi(model), index_of_PRI_jet_leading_phi(model), index_of_PRI_jet_subleading_phi(model)), axis=0)
