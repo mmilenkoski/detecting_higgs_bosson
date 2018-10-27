@@ -34,7 +34,9 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
         loss = compute_loss(y, tx, w)
         # update w
         w = w - gamma * gradient
-        
+    
+    # convert from column to row vector
+    w = np.squeeze(w)
     return w, loss
 
 def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
@@ -74,7 +76,9 @@ def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
             loss = compute_loss(y, tx, w)
             # update w
             w = w - gamma * gradient
-            
+    
+    # convert from column to row vector
+    w = np.squeeze(w)
     return w, loss
 
 def least_squares(y, tx):
@@ -102,6 +106,8 @@ def least_squares(y, tx):
     # calculate loss
     loss = compute_loss(y, tx, w)
     
+    # convert from column to row vector
+    w = np.squeeze(w)
     return w, loss
 
 def ridge_regression(y, tx, lambda_):
@@ -136,6 +142,8 @@ def ridge_regression(y, tx, lambda_):
     # calculate loss
     loss = compute_loss(y, tx, w)
     
+    # convert from column to row vector
+    w = np.squeeze(w)
     return w, loss
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
@@ -161,6 +169,11 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     loss: float
         Loss corresponding to the last weight vector.
     """
+    # convert row vectors to column vectors
+    if (len(y.shape) == 1): 
+        y.shape = (-1, 1)
+    if (len(initial_w.shape) == 1): 
+        initial_w.shape = (-1, 1)
     # Define parameters to store w and loss
     w = initial_w
     loss = -1
@@ -175,7 +188,9 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         if prev_loss != -1 and np.abs(loss-prev_loss) < threshold:
             break
         prev_loss = loss
-        
+    
+    # convert from column to row vector
+    w = np.squeeze(w)
     return w, loss
 
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
@@ -203,6 +218,11 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     loss: float
         Loss corresponding to the last weight vector.
     """
+    # convert row vectors to column vectors
+    if (len(y.shape) == 1): 
+        y.shape = (-1, 1)
+    if (len(initial_w.shape) == 1): 
+        initial_w.shape = (-1, 1)
     # Define parameters to store w and loss
     w = initial_w
     loss = -1
@@ -217,8 +237,11 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         if prev_loss != -1 and np.abs(loss-prev_loss) < threshold:
             break
         prev_loss = loss
-        
+    
+    # convert from column to row vector
+    w = np.squeeze(w)
     return w, loss
+
 
 
 def compute_gradient_least_sqaures(y, tx, w):
