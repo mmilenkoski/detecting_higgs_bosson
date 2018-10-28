@@ -27,6 +27,7 @@ git clone https://github.com/mmilenkoski/ml_project1.git
 
 ## Project Structure
 The project is organized as follows:
+
     .
     ├── utils                    # Utilization files for preprocessing, training and evaluation.
     │   ├── helpers.py           # Helper functions for loading data, making predictions, and creating submission files.
