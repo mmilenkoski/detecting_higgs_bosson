@@ -39,11 +39,13 @@ The project is organized as follows:
     
 ## Running
 
-To reproduce our results, run the following command:
+Before training the model, please unzip the files `data/train.zip` and `data/test.zip` in the folder `data`. You can also unzip the file `data/sample-submission.zip` in order to see the format of the submissions for Kaggle. To reproduce our results run the following command:
 
 ``` 
 python run.py
 ```
+
+After running the script `run.py` you can find the generated predictions in the file `predictions/predictions.csv`. Our final predictions are in the file `predictions/predictions_final.csv` for comparison.
 
 ## Tune hyperparameters
 
