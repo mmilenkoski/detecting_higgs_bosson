@@ -1,4 +1,4 @@
-# Project 1 : Detecting Higgs Bosson
+# Project 1 : Detecting Higgs Boson
 
 This project was created as part of the Machine Learning course [ **CS-433** ] at EPFL. We created a binary classification
 model for detecting the presence of Higgs Bosson particle in events from the Large Hadron Collider at CERN. For this purpose, 
@@ -51,7 +51,7 @@ After running the script `run.py` you can find the generated predictions in the 
 
 ## Tune hyperparameters
 
-We obtained the final hyperparameter using holdout validation and grid search. To train the model with your own hyperparameters, change their values in the file `utils/hyperparameters.py`, and run the file `run.py`
+We obtained the final hyperparameter using holdout validation and grid search. To train the model with your own hyperparameters, change their values in the file `utils/hyperparameters.py`, and run the script `run.py`
 
 ## Authors
 
