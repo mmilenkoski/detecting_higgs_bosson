@@ -9,7 +9,7 @@ several machine learning techniques were implemented and compared. The final mod
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ## Prerequisites
-For project was created and tested with the following dependencies:
+The project was created and tested with the following dependencies:
 
 ```
 - Anaconda Python 3.6.5 
