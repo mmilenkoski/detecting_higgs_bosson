@@ -49,8 +49,6 @@ To train the model with different hyperparameters, change the optimal values for
 
 ## Authors
 
-    * Martin Milenkoski     martin.milenkoski@epfl.ch
-    * Blagoj Mitrevski      blagoj.mitrevski@epfl.ch
-    * Samuel Bosch          samuel.bosch@epfl.ch
-
-
+* Martin Milenkoski     martin.milenkoski@epfl.ch
+* Blagoj Mitrevski      blagoj.mitrevski@epfl.ch
+* Samuel Bosch          samuel.bosch@epfl.ch
