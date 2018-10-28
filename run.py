@@ -57,11 +57,10 @@ for model in range(number_of_models):
     
     # initialize weights for the logistic regression
     initial_w = np.random.randn(x_train.shape[1])
-    print (initial_w)
+
     # train with logistic regression
     w, _ = reg_logistic_regression(y=y_train, tx=x_train, initial_w=initial_w, max_iters=max_iters, gamma=get_gamma(model), lambda_=get_lambda(model))
-    print (w)
-    print()
+
     # predict the labes for the test data
     train_pred = predict_labels(w, x_train, "logistic")
     
