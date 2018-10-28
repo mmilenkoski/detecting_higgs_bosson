@@ -261,7 +261,7 @@ def split_data_in_eight(x, y, ids):
     indx_separated = {}
     t = 0
     
-    x, y, ids, indx = split_data_by_PRI_jet_num(x, y, ids)
+    x, y, ids, indx = split_data_in_four(x, y, ids)
     for i in range(4):
         indx[i], = np.where(indx[i])
         x_sep, y_sep, ids_sep, indx_sep = split_data_by_DER_mass_MMC_helper(x[i], y[i], ids[i], indx[i])
