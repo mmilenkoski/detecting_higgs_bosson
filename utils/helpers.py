@@ -1,12 +1,28 @@
 # -*- coding: utf-8 -*-
-"""some helper functions for project 1."""
 import csv
 import numpy as np
-from impl.implementations import sigmoid
+from utils.implementations import sigmoid
 
 
 def load_csv_data(data_path, sub_sample=False):
-    """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
+    """ Loads data from csv.
+    
+    Parameters
+    ----------
+    data_path: string
+        Data path of the data.
+    sub_sample: boolean
+        If True, returns subset of the data
+        
+    Returns
+    -------
+    yb: ndarray
+        1D array containing the labels of the data.
+    tX: ndarray
+        2D array containing the data.
+    ids: ndarray
+        1D array containing the event ids.
+    """
     y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
     x = np.genfromtxt(data_path, delimiter=",", skip_header=1)
     ids = x[:, 0].astype(np.int)
@@ -26,7 +42,23 @@ def load_csv_data(data_path, sub_sample=False):
 
 
 def predict_labels(weights, data, method):
-    """Generates class predictions given weights, and a test data matrix"""
+    """Computes least squares using gradient descent.
+    
+    Parameters
+    ----------
+    weights: ndarray
+        1D array containing the optimal weights.
+    data: ndarray
+        2D array containing the data.
+    method: string
+        If 'logistic', computes labels using sigmoid function.
+        Otherwise, computes labels with dot product.
+     
+    Returns
+    -------
+    y_pred: ndarray
+        1D array containing the predictions.
+    """
     if len(weights.shape) == 1:
         weights.shape = (-1, 1)
     if method == "logistic":
@@ -43,11 +75,16 @@ def predict_labels(weights, data, method):
 
 
 def create_csv_submission(ids, y_pred, name):
-    """
-    Creates an output file in csv format for submission to kaggle
-    Arguments: ids (event ids associated with each prediction)
-               y_pred (predicted class labels)
-               name (string name of .csv output file to be created)
+    """ Creates an output file in csv format for submission to Kaggle.
+    
+    Parameters
+    ----------
+    ids: ndarray
+        Event ids.
+    y_pred: ndarray
+        1D array containing the predictions.
+    name: string
+        Data path of the output file to be created.
     """
     with open(name, 'w') as csvfile:
         fieldnames = ['Id', 'Prediction']
@@ -57,8 +94,40 @@ def create_csv_submission(ids, y_pred, name):
             writer.writerow({'Id':int(r1),'Prediction':int(r2)})
             
 def accuracy_score(y_pred, y_true):
+    """ Computes classification accuracy.
+    
+    Parameters
+    ----------
+    y_pred: ndarray
+        1D array containing the predicted labels.
+    y_true: ndarray
+        1D array containing the true labels.
+    
+    Returns
+    -------
+    accuracy: float
+        The computed classification accuracy.
+    """
     assert y_pred.shape == y_true.shape
-    return np.sum(y_pred == y_true)*1.0/len(y_true)
+    accuracy =  np.sum(y_pred == y_true)*1.0/len(y_true)
+    return accuracy
 
 def transform_labels_to_zero_one(labels):
-    return (1 + labels) / 2
+    """ Transforms the input labels in format for logistic regresion:
+    
+    Example: 
+        -1 -> 0
+        1 -> 1
+    
+    Parameters
+    ----------
+    labels: ndarray
+        1D array containing the labels to be transformed.
+    
+    Returns
+    -------
+    transformed: ndarray
+        Transofrmed labels.
+    """
+    transformed = (1 + labels) / 2
+    return transformed

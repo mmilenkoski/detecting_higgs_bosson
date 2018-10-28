@@ -2,7 +2,7 @@
 import numpy as np
 from utils.helpers import *
 from utils.preprocessing import *
-from impl.implementations import *
+from utils.implementations import *
 from utils.hyperparameters import *
 
 # set seed for reproducibility
@@ -28,9 +28,8 @@ print("Adjusting data...")
 x_train_split = adjust_cartesian_features(x_train_split)
 x_test_split = adjust_cartesian_features(x_test_split)
 
-# Train model
+# Load hyperparameters
 number_of_models = get_number_of_models()
-poly_degree = get_poly_degree()
 max_iters = get_max_iters()
 
 predictions = Y_test.copy()
@@ -39,6 +38,7 @@ train_accuracy = []
 print("Training %s models..." % (number_of_models))
 for model in range(number_of_models):
     print("Training model: %s/%s" % (model+1, number_of_models))
+    # Data for current model
     x_train = x_train_split[model].copy()
     y_train = y_train_split[model]
     x_test = x_test_split[model].copy()
@@ -46,23 +46,27 @@ for model in range(number_of_models):
     
     # transform labels (-1 -> 0, 1 -> 1) to train the logistic regressions
     y_train = transform_labels_to_zero_one(y_train)
+    
     # standardize the train and test data
     x_train, x_test = standardize(x_train, x_test)
     
     #expand the data with polynomial features
+    poly_degree = get_poly_degree(model)
     x_train = build_poly(x_train, poly_degree)
     x_test = build_poly(x_test, poly_degree)
     
-    # initial weights for the logistic regression
+    # initialize weights for the logistic regression
     initial_w = np.random.randn(x_train.shape[1])
-    # optimize the initial weights
+    # train with logistic regression
     w, _ = reg_logistic_regression(y=y_train, tx=x_train, initial_w=initial_w, max_iters=max_iters, gamma=get_gamma(model), lambda_=get_lambda(model))
     
-    # predict the labes for the test data for evaluation
+    # predict the labes for the test data
     train_pred = predict_labels(w, x_train, "logistic")
+    
     # transform labels (-1 -> 0, 1 -> 1) for evaluation
     train_pred = transform_labels_to_zero_one(train_pred)
-    # compute the accuracy for the current model
+    
+    # compute the classification accuracy for the current model
     train_accuracy.append(accuracy_score(train_pred, y_train))
     
     # predict the labels for the training data

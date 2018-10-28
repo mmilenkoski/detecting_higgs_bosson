@@ -2,6 +2,7 @@
 """user defined function for preprocessing data."""
 import numpy as np
 
+# list of column names
 data_columns = ["DER_mass_MMC", "DER_mass_transverse_met_lep", "DER_mass_vis", "DER_pt_h", "DER_deltaeta_jet_jet",
                "DER_mass_jet_jet", "DER_prodeta_jet_jet", "DER_deltar_tau_lep", "DER_pt_tot", "DER_sum_pt",
                "DER_pt_ratio_lep_tau", "DER_met_phi_centrality", "DER_lep_eta_centrality", "PRI_tau_pt",
@@ -9,115 +10,26 @@ data_columns = ["DER_mass_MMC", "DER_mass_transverse_met_lep", "DER_mass_vis", "
                "PRI_met_sumet", "PRI_jet_num", "PRI_jet_leading_pt", "PRI_jet_leading_eta", "PRI_jet_leading_phi",
                "PRI_jet_subleading_pt", "PRI_jet_subleading_eta", "PRI_jet_subleading_phi", "PRI_jet_all_pt"]
 
-data_columns_splited = {0: ['DER_mass_MMC',
-  'DER_mass_transverse_met_lep',
-  'DER_mass_vis',
-  'DER_pt_h',
-  'DER_deltar_tau_lep',
-  'DER_pt_tot',
-  'DER_sum_pt',
-  'DER_pt_ratio_lep_tau',
-  'DER_met_phi_centrality',
-  'PRI_tau_pt',
-  'PRI_tau_eta',
-  'PRI_tau_phi',
-  'PRI_lep_pt',
-  'PRI_lep_eta',
-  'PRI_lep_phi',
-  'PRI_met',
-  'PRI_met_phi',
-  'PRI_met_sumet'],
- 1: ['DER_mass_MMC',
-  'DER_mass_transverse_met_lep',
-  'DER_mass_vis',
-  'DER_pt_h',
-  'DER_deltar_tau_lep',
-  'DER_pt_tot',
-  'DER_sum_pt',
-  'DER_pt_ratio_lep_tau',
-  'DER_met_phi_centrality',
-  'PRI_tau_pt',
-  'PRI_tau_eta',
-  'PRI_tau_phi',
-  'PRI_lep_pt',
-  'PRI_lep_eta',
-  'PRI_lep_phi',
-  'PRI_met',
-  'PRI_met_phi',
-  'PRI_met_sumet',
-  'PRI_jet_leading_pt',
-  'PRI_jet_leading_eta',
-  'PRI_jet_leading_phi',
-  'PRI_jet_all_pt'],
- 2: ['DER_mass_MMC',
-  'DER_mass_transverse_met_lep',
-  'DER_mass_vis',
-  'DER_pt_h',
-  'DER_deltaeta_jet_jet',
-  'DER_mass_jet_jet',
-  'DER_prodeta_jet_jet',
-  'DER_deltar_tau_lep',
-  'DER_pt_tot',
-  'DER_sum_pt',
-  'DER_pt_ratio_lep_tau',
-  'DER_met_phi_centrality',
-  'DER_lep_eta_centrality',
-  'PRI_tau_pt',
-  'PRI_tau_eta',
-  'PRI_tau_phi',
-  'PRI_lep_pt',
-  'PRI_lep_eta',
-  'PRI_lep_phi',
-  'PRI_met',
-  'PRI_met_phi',
-  'PRI_met_sumet',
-  'PRI_jet_leading_pt',
-  'PRI_jet_leading_eta',
-  'PRI_jet_leading_phi',
-  'PRI_jet_subleading_pt',
-  'PRI_jet_subleading_eta',
-  'PRI_jet_subleading_phi',
-  'PRI_jet_all_pt'],
- 3: ['DER_mass_MMC',
-  'DER_mass_transverse_met_lep',
-  'DER_mass_vis',
-  'DER_pt_h',
-  'DER_deltaeta_jet_jet',
-  'DER_mass_jet_jet',
-  'DER_prodeta_jet_jet',
-  'DER_deltar_tau_lep',
-  'DER_pt_tot',
-  'DER_sum_pt',
-  'DER_pt_ratio_lep_tau',
-  'DER_met_phi_centrality',
-  'DER_lep_eta_centrality',
-  'PRI_tau_pt',
-  'PRI_tau_eta',
-  'PRI_tau_phi',
-  'PRI_lep_pt',
-  'PRI_lep_eta',
-  'PRI_lep_phi',
-  'PRI_met',
-  'PRI_met_phi',
-  'PRI_met_sumet',
-  'PRI_jet_leading_pt',
-  'PRI_jet_leading_eta',
-  'PRI_jet_leading_phi',
-  'PRI_jet_subleading_pt',
-  'PRI_jet_subleading_eta',
-  'PRI_jet_subleading_phi',
-  'PRI_jet_all_pt']}
+# dictionary where key is the number of observed particles (PRI_jet_num), and the value is list of non-missing column names
+data_columns_splited = {
+    0: ['DER_mass_MMC', 'DER_mass_transverse_met_lep', 'DER_mass_vis', 'DER_pt_h', 'DER_deltar_tau_lep', 'DER_pt_tot', 'DER_sum_pt', 'DER_pt_ratio_lep_tau', 'DER_met_phi_centrality', 'PRI_tau_pt', 'PRI_tau_eta', 'PRI_tau_phi', 'PRI_lep_pt', 'PRI_lep_eta', 'PRI_lep_phi', 'PRI_met', 'PRI_met_phi', 'PRI_met_sumet'],
+ 
+    1: ['DER_mass_MMC', 'DER_mass_transverse_met_lep', 'DER_mass_vis', 'DER_pt_h', 'DER_deltar_tau_lep', 'DER_pt_tot', 'DER_sum_pt', 'DER_pt_ratio_lep_tau', 'DER_met_phi_centrality', 'PRI_tau_pt', 'PRI_tau_eta', 'PRI_tau_phi', 'PRI_lep_pt', 'PRI_lep_eta', 'PRI_lep_phi', 'PRI_met', 'PRI_met_phi', 'PRI_met_sumet', 'PRI_jet_leading_pt', 'PRI_jet_leading_eta', 'PRI_jet_leading_phi', 'PRI_jet_all_pt'],
+ 
+    2: ['DER_mass_MMC', 'DER_mass_transverse_met_lep', 'DER_mass_vis', 'DER_pt_h', 'DER_deltaeta_jet_jet', 'DER_mass_jet_jet', 'DER_prodeta_jet_jet', 'DER_deltar_tau_lep', 'DER_pt_tot', 'DER_sum_pt', 'DER_pt_ratio_lep_tau', 'DER_met_phi_centrality', 'DER_lep_eta_centrality', 'PRI_tau_pt', 'PRI_tau_eta', 'PRI_tau_phi', 'PRI_lep_pt', 'PRI_lep_eta', 'PRI_lep_phi', 'PRI_met', 'PRI_met_phi', 'PRI_met_sumet', 'PRI_jet_leading_pt', 'PRI_jet_leading_eta', 'PRI_jet_leading_phi', 'PRI_jet_subleading_pt', 'PRI_jet_subleading_eta', 'PRI_jet_subleading_phi', 'PRI_jet_all_pt'],
+ 
+    3: ['DER_mass_MMC', 'DER_mass_transverse_met_lep', 'DER_mass_vis', 'DER_pt_h', 'DER_deltaeta_jet_jet', 'DER_mass_jet_jet', 'DER_prodeta_jet_jet', 'DER_deltar_tau_lep', 'DER_pt_tot', 'DER_sum_pt', 'DER_pt_ratio_lep_tau', 'DER_met_phi_centrality', 'DER_lep_eta_centrality', 'PRI_tau_pt', 'PRI_tau_eta', 'PRI_tau_phi', 'PRI_lep_pt', 'PRI_lep_eta', 'PRI_lep_phi', 'PRI_met', 'PRI_met_phi', 'PRI_met_sumet', 'PRI_jet_leading_pt', 'PRI_jet_leading_eta', 'PRI_jet_leading_phi', 'PRI_jet_subleading_pt', 'PRI_jet_subleading_eta', 'PRI_jet_subleading_phi', 'PRI_jet_all_pt']}
 
 def get_idx_columns_for_PRI_jet_num():
-    """Helper function for split_data_in_four.
+    """Helper function for `split_data_in_four`.
     
-    After splitting the data on subsets by the value of PRI_jet_num some of the columns have only nan values.
-    This function retruns the column indexes of the valid columns for every subset.
+    After splitting the data in subsets by the value of `PRI_jet_num` some of the columns have only nan values.
+    This function returns the column indexes of the valid columns for every subset.
     
     Returns
     -------
-    indexes: dict
-        Dictionary containing the indexes of the columns.
+    columns_for_PRI_jet_num: dict
+        Dictionary containing the indexes of the valid columns.
     """
     columns_for_PRI_jet_num = {}
     for i in range(4):
@@ -125,7 +37,7 @@ def get_idx_columns_for_PRI_jet_num():
     return columns_for_PRI_jet_num
 
 def data_columns_get_index(column_name):
-    """For a given column_name returns the corresponding column index in the data matrix.
+    """For a given column_name returns the corresponding column index in the original data matrix.
     
     Parameters
     ----------
@@ -135,15 +47,17 @@ def data_columns_get_index(column_name):
     Returns
     -------
     index: int
-        Integer representing the column index in the data matrix.
+        Integer representing the column index in the original data matrix.
     """
-    return data_columns.index(column_name)
+    index = data_columns.index(column_name)
+    return index
 
 def split_data_in_four(x, y, ids):
     """Splits the data by the value of PRI_jet_num.
     
     Splits the data by the value of the PRI_jet_num (0, 1, 2, 3). Returns dictionaries where the keys are the value of
-    PRI_jet_num, and the values are the corresponding data matrix/labels/inds.
+    PRI_jet_num, and the values are the corresponding data matrix/labels/ids/indices. Removes columns with missing values from 
+    each subset.
     
     Parameters
     ----------
@@ -157,13 +71,13 @@ def split_data_in_four(x, y, ids):
     Returns
     -------
     x_separated: dict
-        Dictionary containing the splitted data in 2D array.
+        Dictionary of 2D arrays containing the splitted data.
     y_separated: dict
-        Dictionary containing the splitted labels in 1D array.
+        Dictionary of 1D arrays containing the splitted labels.
     ids_separated: dict
-        Dictionary containing the splitted ids in 1D arrays.
+        Dictionary of 1D arrays containing the splitted ids.
     indx: dict
-        Dictionary containing the original indexes of the splited data in the input data matrix.
+        Dictionary of 1D arrays containing the original indices of the splited data in the original data matrix.
     """
     columns = get_idx_columns_for_PRI_jet_num()
     pri_jet_num = x[:,data_columns_get_index("PRI_jet_num")]
@@ -184,10 +98,10 @@ def split_data_in_four(x, y, ids):
     return x_separated, y_separated, ids_separated, indx
 
 def split_data_by_DER_mass_MMC_helper(x, y, ids, indx):
-    """Helper function used by split_data_in_eight.
+    """Helper function used by `split_data_in_eight`.
     
-    It splits the data in two subsets based on the value of the DER_mass_MMC, the first one contains real values for the mass
-    and the second has "nan" mass.
+    Splits the data in two subsets based on the value of the DER_mass_MMC, the first one contains real values for the mass
+    and the second has "nan" values for mass.
     
     Parameters
     ----------
@@ -197,17 +111,19 @@ def split_data_by_DER_mass_MMC_helper(x, y, ids, indx):
         1D array representing the labels of the data.
     ids: ndarray
         1D array representing the ids of the data.
+    indx: ndarray
+        1D array representing the original indices of the data.
     
     Returns
     -------
     x_separated: dict
-        Dictionary containing the splitted data in 2D array.
+        Dictionary of 2D arrays containing the splitted data.
     y_separated: dict
-        Dictionary containing the splitted labels in 1D array.
+        Dictionary of 1D arrays containing the splitted labels.
     ids_separated: dict
-        Dictionary containing the splitted ids in 1D arrays.
-    indx: dict
-        Dictionary containing the original indexes of the splited data in the input data matrix.
+        Dictionary of 1D arrays containing the splitted ids.
+    indx_separated: dict
+        Dictionary of 1D arrays containing the original indices of the splited data in the original data matrix.
     """
     null_ids = x[:, 0] == -999
     not_null_ids = ~null_ids
@@ -233,7 +149,8 @@ def split_data_in_eight(x, y, ids):
     """Splits the data by the value of PRI_jet_num and by the DER_mass_MMC.
     
     After spliting the data by the PRI_jet_num it can also be splitted by the value of DER_mass_MMC into two subsets where the
-    first one contains real values for the mass and the second subsets has "nan" mass.
+    first one contains real values for the mass and the second subset has "nan" mass. Removes the mass column with missing
+    values.
     
     Parameters
     ----------
@@ -247,13 +164,13 @@ def split_data_in_eight(x, y, ids):
     Returns
     -------
     x_separated: dict
-        Dictionary containing the splitted data in 2D array.
+        Dictionary of 2D arrays containing the splitted data.
     y_separated: dict
-        Dictionary containing the splitted labels in 1D array.
+        Dictionary of 1D arrays containing the splitted labels.
     ids_separated: dict
-        Dictionary containing the splitted ids in 1D arrays.
-    indx: dict
-        Dictionary containing the original indexes of the splited data in the input data matrix.
+        Dictionary of 1D arrays containing the splitted ids.
+    indx_separated: dict
+        Dictionary of 1D arrays containing the original indices of the splited data in the original data matrix.
     """
     x_separated = {}
     y_separated = {}
@@ -275,10 +192,10 @@ def split_data_in_eight(x, y, ids):
     return x_separated, y_separated, ids_separated, indx_separated
 
 def standardize(x_train, x_test):
-    """Standardizing the test and train data.
+    """Standardizes the test and train data.
     
-    Standardizing each column of the test and train data by subtracting from them the mean value of the training data
-    and dividing each column with the standard deviation of the traning data.
+    Standardizes each column of the test and train data by substracting from them the mean value of that column in the 
+    training data and dividing each column with the standard deviation of that column in the traning data.
     
     Parameters
     ----------
@@ -309,7 +226,7 @@ def standardize(x_train, x_test):
 def min_max_normalization(x_train, x_test):
     """Min_max standardization of the test and train data.
     
-    Standardizing the values of each column of the test and train data to lie between zero and one, i.e. the minimum value
+    Standardizes the values of each column of the test and train data to lie between zero and one, i.e. the minimum value
     is scaled to zero, the maximum value is scaled to one and the other values lie in between.
     
     Parameters
@@ -339,33 +256,9 @@ def min_max_normalization(x_train, x_test):
     x_test = x_test / denum
 
     return x_train, x_test
-
-def build_k_indices(y, k_fold, seed, shuffle):
-    """build k indices for k-fold."""
-    num_row = y.shape[0]
-    interval = int(num_row / k_fold)
-    np.random.seed(seed)
-    if shuffle:
-        indices = np.random.permutation(num_row)
-    else:
-        indices = num_row
-    k_indices = [indices[k * interval: (k + 1) * interval] for k in range(k_fold)]
-    return np.array(k_indices)
-
-def k_fold_split(y, x, n_splits, seed=0, shuffle=True):
-    """return train index and test index.
-        sci-kit like function!
-    """
-    assert y.shape[0] == x.shape[0]
-    k_indices = build_k_indices(y, n_splits, seed, shuffle)
-    for n in range(n_splits):
-        te_indice = k_indices[n]
-        tr_indice = k_indices[~(np.arange(k_indices.shape[0]) == n)]
-        tr_indice = tr_indice.reshape(-1)
-        yield tr_indice, te_indice
         
 def nan_to_mean(x_train, x_test):
-    """Replaces the -999 (nan values) with the mean of each column.
+    """Replaces the -999 (nan values) in the train and test data with the mean of each column in the train data.
     
     Parameters
     ----------
@@ -387,14 +280,13 @@ def nan_to_mean(x_train, x_test):
     x_train[inds] = np.take(means, inds[1])
     
     x_test[np.where(x_test == -999)] = np.nan
-    means = np.nanmean(x_test, axis=0)
     inds = np.where(np.isnan(x_test))
     x_test[inds] = np.take(means, inds[1])
     
     return x_train, x_test
 
-def nan_to_median(x_train, x_test):
-    """Replaces the -999 (nan values) with the median of each column.
+def nan_to_median(x_train, x_test): 
+    """Replaces the -999 (nan values) in the train and test data with the median of each column in the train data.
     
     Parameters
     ----------
@@ -422,7 +314,7 @@ def nan_to_median(x_train, x_test):
     return x_train, x_test
 
 def build_poly(x, degree):
-    """Polynomial extension of x.
+    """Polynomial expansion of x.
     
     Extends the feature matrix x by adding all polynomials of the features with degree less than or equal to the
     given degree parameter. Example, if we have a input [x, y] and degree 3 it generates [1, x, x^2, x^3, y, y^2, y^3].
@@ -432,7 +324,7 @@ def build_poly(x, degree):
     x: ndarray
         2D array representing the feature matrix. 
     degree: int
-        The degree of the generated polynomial features.
+        The maximum degree of the generated polynomial features.
      
     Returns
     -------
@@ -447,35 +339,69 @@ def build_poly(x, degree):
             poly = np.c_[poly, np.power(x[:, column], deg)]
     return poly
 
-
-#The models are the following ones:
-# 0 - jet 0 with mass
-# 1 - jet 0 witout mass
-# 2 - jet 1 with mass
-# 3 - jet 1 without mass
-# 4 - jet 2 with mass
-# 5 - jet 2 without mass
-# 6 - jet 3 with mass
-# 7 - jet 3 without mass
-
 def get_angles_for_jet(i):
+    """ Returns indices of columns with angle features for the model `i`.
+    
+    The models numbers have the following meaning:
+    0 - jet 0 with mass
+    1 - jet 0 without mass
+    2 - jet 1 with mass
+    3 - jet 1 without mass
+    4 - jet 2 with mass
+    5 - jet 2 without mass
+    6 - jet 3 with mass
+    7 - jet 3 without mass
+    
+    Parameters
+    ----------
+    i: int
+        Model number.
+    
+    Returns
+    -------
+    angles: list
+        Indices of columns with angle features for the corresponding model.
+    """
     split_0 = [9, 10, 11, 12, 13, 14]
     split_1 = [9, 10, 11, 12, 13, 14, 18, 19, 20]
     split_2 = [13, 14, 15, 16, 17, 18, 22, 23, 24, 25, 26 ,27]
     
     if i in [0, 1]:
-        angels = split_0
+        angles = split_0
     if i in [2, 3]:
-        angels = split_1
+        angles = split_1
     if i in [4, 5, 6, 7]:
-        angels = split_2
+        angles = split_2
     
     if i % 2 == 0:
-        return angels
+        return angles
     else:
-        return [x-1 for x in angels]
+        angles = [x-1 for x in angles]
+        return angles
     
 def get_phi_angles_for_jet(i):
+    """ Returns indices of columns with phi-angle features for the model `i`.
+    
+    The models numbers have the following meaning:
+    0 - jet 0 with mass
+    1 - jet 0 without mass
+    2 - jet 1 with mass
+    3 - jet 1 without mass
+    4 - jet 2 with mass
+    5 - jet 2 without mass
+    6 - jet 3 with mass
+    7 - jet 3 without mass
+    
+    Parameters
+    ----------
+    i: int
+        Model number.
+    
+    Returns
+    -------
+    angles: list
+        Indices of columns with phi-angle features for the corresponding model.
+    """
     split_0 = [11, 14, 16]
     split_1 = [11, 14, 16, 20]
     split_2 = [15, 18, 20, 24, 27]
@@ -494,41 +420,36 @@ def get_phi_angles_for_jet(i):
 
 
 def adjust_cartesian_features(x_separated):
-    print("OK")
-    """
-    This function fixes the problem of having angles as features. Obviosly, having angles as features doesn't help
-    As the apsolutie direction in which particles leave the detector is irelevant, we simply take PRI_tau_phi as
-    a reference angle, and substract it from all the other angles
-    Then we delete all the angles (we don't want them as features)
-    Instead we use sin() and cos() of all the angles as features. Note that this is sin() and cos() of all the
-    relative angles, where PRI_tau_phi has already been substracted
-
-        Parameters
-        ----------
-        x_separated: dict
-            Dictionary using the model number as a key (integers from 0 to 7)
-            Each element in the dictionary is a ndarray (2D array).
-            The columns are the corresponding features (mass, angles, ...),
-            while the rows correspond to different events
-
-        Returns
-        -------
-        x_separated: dict
-            A table in the same format, with adjusted features
-        """
+    """ Substracts reference angle from all phi-angles and transforms them to their sine and cosine components.
     
+    Chooses `PRI_tau_phi` as reference angle, substracts it from all other phi-angles. Then, transforms each phi-angle to its
+    sine and cosine component. Finally, removes original phi-angle features
+
+    Parameters
+    ----------
+    x_separated: dict
+        Dictionary of 2D arrays containing the splitted data before transformation.
+
+    Returns
+    -------
+    x_separated: dict
+        Dictionary of 2D arrays containing the transformed data.
+    """
     for model in range(8):
-        #samuel comps
+        # phi-angles for current model
         phi_idx = get_phi_angles_for_jet(model)
         
+        # reference angle
         tau_phi = x_separated[model][:, phi_idx[0]]
         
         for idx in phi_idx[1:]:
+            # phi-angles to be transformed
             other_phi = x_separated[model][:, idx]
+            # transform to sine and cosine components
             x_separated[model] = np.c_[x_separated[model], np.sin(other_phi - tau_phi)]
             x_separated[model] = np.c_[x_separated[model], np.cos(other_phi - tau_phi)]
         
-        #delete phi angels for model
+        # delete original phi angles
         x_separated[model] = np.delete(x_separated[model], phi_idx, axis=1)
             
     return x_separated
