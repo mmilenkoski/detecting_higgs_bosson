@@ -1,4 +1,4 @@
-# Project 1 : Predicting Higgs Bosson
+# Project 1 : Detecting Higgs Bosson
 
 This project was created as part of the Machine Learning course [ **CS-433** ] at EPFL. We created a binary classification
 model for detecting the presence of Higgs Bosson particle in events from the Large Hadron Collider at CERN. For this purpose, 
