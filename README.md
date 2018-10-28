@@ -45,7 +45,7 @@ python run.py
 
 ## Tune hyperparameters
 
-To train the model with different hyperparameters, change the optimal values for the hyperparameters in the file `utils/hyperparameters.py`, and run the file `run.py`
+We obtained the final hyperparameter using holdout validation and grid search. To train the model with your own hyperparameters, change their values in the file `utils/hyperparameters.py`, and run the file `run.py`
 
 ## Authors
 
