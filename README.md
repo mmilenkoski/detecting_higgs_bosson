@@ -29,6 +29,8 @@ git clone https://github.com/mmilenkoski/ml_project1.git
 The project is organized as follows:
 
     .
+    ├── data                     # Train and test datasets
+    ├── predictions              # Prediction files for submission on Kaggle
     ├── utils                    # Utilization files for preprocessing, training and evaluation.
     │   ├── helpers.py           # Helper functions for loading data, making predictions, and creating submission files.
     │   ├── hyperparameters.py   # Functions for accessing the best hyperparameters obtained from holdout validation.
