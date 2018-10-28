@@ -9,11 +9,11 @@ several machine learning techniques were implemented and compared. The final mod
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ## Prerequisites
-For running the project you will need the following dependencies:
+For project was created and tested with the following dependencies:
 
 ```
-- Python 3.6+ 
-- NumPy 1.14+
+- Anaconda Python 3.6.5 
+- NumPy 1.14.3
 ```
 
 ## Installing
