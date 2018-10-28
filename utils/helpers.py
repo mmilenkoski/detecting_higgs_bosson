@@ -27,7 +27,9 @@ def load_csv_data(data_path, sub_sample=False):
 
 def predict_labels(weights, data, method):
     """Generates class predictions given weights, and a test data matrix"""
-    if method == "logistic" or method =="SKL":
+    if len(weights.shape) == 1:
+        weights.shape = (-1, 1)
+    if method == "logistic":
         z = np.dot(data, weights)
         y_pred = sigmoid(z)
         y_pred[np.where(y_pred <= 0.5)] = -1
@@ -53,3 +55,10 @@ def create_csv_submission(ids, y_pred, name):
         writer.writeheader()
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({'Id':int(r1),'Prediction':int(r2)})
+            
+def accuracy_score(y_pred, y_true):
+    assert y_pred.shape == y_true.shape
+    return np.sum(y_pred == y_true)*1.0/len(y_true)
+
+def transform_labels_to_zero_one(labels):
+    return (1 + labels) / 2
