@@ -29,7 +29,8 @@ git clone https://github.com/mmilenkoski/ml_project1.git
 
     .
     ├── utils                    # Utilization files for preprocessing, training and evaluation
-    │   ├── helpers.py           # Helper functions for loading data, making predictions, and creating submission files
+    │   ├── helpers.py           # Helper functions for loading data, making predictions, 
+    │   │                        # and creating submission files
     │   ├── hyperparameters.py   # Functions for accessing the best hyperparameters obtained from holdout validation
     │   ├── implementations.py   # Implementations of required machine learning models and helper functions for them
     │   └── preprocessing.py     # Data cleaning and feature engineering functions
