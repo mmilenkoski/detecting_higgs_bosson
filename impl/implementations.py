@@ -2,7 +2,7 @@
 import numpy as np
 
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):
-    """Computes least squares using gradient descent
+    """Computes least squares using gradient descent.
     
     Parameters
     ----------
@@ -41,7 +41,7 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
     return w, loss
 
 def least_squares_SGD(y, tx, initial_w, batch_size, max_iters, gamma):
-    """Computes least squares using stochastic gradient descent
+    """Computes least squares using stochastic gradient descent.
     
     Parameters
     ----------
@@ -148,7 +148,7 @@ def ridge_regression(y, tx, lambda_):
     return w, loss
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
-    """Implements logistic regression using gradient descent
+    """Implements logistic regression using gradient descent.
     
     Parameters
     ----------
@@ -195,7 +195,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     return w, loss
 
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
-    """Implements regularized logistic regression using gradient descent
+    """Implements regularized logistic regression using gradient descent.
     
     Parameters
     ----------
@@ -305,7 +305,7 @@ def calculate_mae(e):
 
 
 def compute_loss(y, tx, w, method=None):
-    """Calculates the loss using negative log likelihood, rmse, mae or mse.
+    """Calculates the loss using Negative Log-Likelihood, RMSE, MAE or MSE.
 
     Parameters
     ----------
@@ -317,14 +317,14 @@ def compute_loss(y, tx, w, method=None):
         1D array containing the weight vector
     method: string, optional
         Method for calculating the loss. 
-        If 'logistic', calculate Negative Log-Likelihood.
+        If 'logistic', calculates Negative Log-Likelihood.
         If 'rmse', calculates Root Mean Squared Error.
         If 'mae', calculates Mean Absolute Error.
         If None (default), calculates Mean Squared Error.
         
     Returns
     -------
-    loss: float64
+    loss: float
         The corresponding loss computed on the input.
     """
     e = y - np.dot(tx, w)
@@ -402,7 +402,10 @@ def sigmoid(t):
 
 
 def negative_log_likelihood(y, tx, w, lambda_=None):
-    """Calculates the mean negative log-likelihood loss.
+    """Calculates the mean Negative Log-Likelihood loss.
+    
+    If the regularization parameter is None, the function computes the loss of logistic regression. Otherwise, it computes 
+    the loss of regularized logistic regression, using the value of lambda_ as regularization parameter.
     
     Parameters
     ----------
@@ -424,7 +427,7 @@ def negative_log_likelihood(y, tx, w, lambda_=None):
     # calculate basic loss
     y.shape = (-1, 1)
     pred = tx.dot(w)
-    # calculates log[1 + e^(pred)]
+    # calculate log[1 + e^(pred)]
     term1 = np.logaddexp(0, pred)
     # element-wise multiplication
     term2 = np.multiply(y, pred)
@@ -480,13 +483,15 @@ def learning_by_gradient_descent(y, tx, w, gamma):
         2D array containing the training data.
     w: ndarray
         1D array containing the weight vector.
+    gamma: float
+        Learning rate.
         
     Returns
     -------
-    w: ndarray
-        1D array containing the updated weight vector.
     loss: float
         Loss corresponding to the updated weight vector.
+    w: ndarray
+        1D array containing the updated weight vector.
     """
     gradient = compute_gradient_log_reg(y, tx, w)
     w = w - gamma*gradient
@@ -504,6 +509,8 @@ def learning_by_reg_gradient_descent(y, tx, w, gamma, lambda_):
         2D array containing the training data.
     w: ndarray
         1D array containing the weight vector.
+    gamma: float
+        Learning rate.
     lambda_: float
         Regularization parameter.
         
