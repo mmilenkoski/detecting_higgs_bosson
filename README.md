@@ -28,10 +28,29 @@ git clone https://github.com/mmilenkoski/ml_project1.git
 ## Project Structure
 
     .
-    ├── utils                    # Utilization files for preprocessing, training and evaluation
-    │   ├── helpers.py           # Helper functions for loading data, making predictions, 
-    │   │                        # and creating submission files
-    │   ├── hyperparameters.py   # Functions for accessing the best hyperparameters obtained from holdout validation
-    │   ├── implementations.py   # Implementations of required machine learning models and helper functions for them
-    │   └── preprocessing.py     # Data cleaning and feature engineering functions
-    └── run.py                   # File for training the optimal model and creating a file with final predictions.
+    ├── utils                    # Utilization files for preprocessing, training and evaluation.
+    │   ├── helpers.py           # Helper functions for loading data, making predictions, and creating submission files.
+    │   ├── hyperparameters.py   # Functions for accessing the best hyperparameters obtained from holdout validation.
+    │   ├── implementations.py   # Implementations of required machine learning models.
+    │   └── preprocessing.py     # Data cleaning and feature engineering functions.
+    └── run.py                   # Script for training the optimal model, and creating a file with final predictions.
+    
+## Running
+
+To reproduce our results, run the following command:
+
+``` 
+python run.py
+```
+
+## Tune hyperparameters
+
+To train the model with different hyperparameters, change the optimal values for the hyperparameters in the file `utils/hyperparameters.py`, and run the file `run.py`
+
+## Authors
+
+    * Martin Milenkoski     martin.milenkoski@epfl.ch
+    * Blagoj Mitrevski      blagoj.mitrevski@epfl.ch
+    * Samuel Bosch          samuel.bosch@epfl.ch
+
+
