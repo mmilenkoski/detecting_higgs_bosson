@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Implementations of required machine learning algorithms"""
 import numpy as np
 
 def least_squares_GD(y, tx, initial_w, max_iters, gamma):

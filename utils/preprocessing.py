@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""user defined function for preprocessing data."""
+"""Functions for preprocessing data and feature engineering"""
 import numpy as np
 
 # list of column names

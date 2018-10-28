@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Functions for accessing optimal hyperparameters"""
 
 def get_lambda(model):
     """ Returns best regularization parameter for the model.

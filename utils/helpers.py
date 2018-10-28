@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+""" Helper functions for loading data and creating submissions"""
 import csv
 import numpy as np
 from utils.implementations import sigmoid
